@@ -1,0 +1,109 @@
+﻿@model TaskManagementApp.Models.Team
+
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+<div class="card">
+
+    @Html.Partial("TeamInfo", Model)
+
+    <div class="card-body">
+        <div class="d-flex justify-content-sm-around flex-wrap" style="gap:20px">
+            @foreach (ApplicationUser user in ViewBag.UserMembers)
+            {
+                <div class="card">
+                    @if (ViewBag.Organizer == @user.Id)
+                    {
+                        <div class="d-flex justify-content-center flex-row">
+                            <h6>ORGANIZATOR</h6>
+                        </div>
+                    }
+                    @Html.Partial("UserInfo", user)
+                    @if (ViewBag.AfisareButoane == true && ViewBag.EsteAdmin)
+                    {
+                        @if (ViewBag.Organizer == @user.Id)
+                        {
+                            <div class="d-flex justify-content-center flex-row">
+                                <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrg/@user.Id/@Model.TeamId">Revoca drepturi</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-center flex-row">
+                                <form method="post" action="/TeamMembers/Delete/@user.Id/@Model.TeamId">
+                                    <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Sterge membru</button>
+                                </form>
+                            </div>
+                        }
+                    }
+                    else if (ViewBag.AfisareButoane == true && ViewBag.EsteOrganizator)
+                    {
+                        @if (ViewBag.Organizer != @user.Id)
+                        {
+                            <div class="d-flex justify-content-center flex-row">
+                                <form method="post" action="/TeamMembers/Delete/@user.Id/@Model.TeamId">
+                                    <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Sterge membru</button>
+                                </form>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+        <div />
+        @if (ViewBag.AfisareButoane == true && (ViewBag.EsteOrganizator || ViewBag.EsteAdmin))
+        {
+            @if (ViewBag.NrAvailableUsers != 0)
+            {
+                <div class="card-body">
+                    <form method="POST" asp-controller="Teams" asp-action="AddMember">
+                        <input type="hidden" name="TeamId" value="@Model.TeamId" />
+                        <div class="d-flex flex-row justify-content-center p-3 border-1 border-top">
+                            <div>
+                                <select name="UserId" class="form-control">
+                                    <option selected value="null">Adauga un membru in aceasta echipa</option>
+                                    @foreach (var user in ViewBag.UsersList)
+                                    {
+                                        <option value="@user.Id">@user.UserName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <input type="submit" class="btn btn-success alert-success" value="+" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <div class="card-body">
+                    <div class="d-flex flex-row justify-content-center p-3 border-1 border-top">
+                        <div>
+                            <h3>Nu mai exista membrii disponibili!</h3>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="d-flex flex-row justify-content-between p-3 border-1 border-top">
+                <a class="btn btn-success" href="/Teams/Edit/@Model.TeamId">Editeaza echipa</a>
+                <form method="post" action="/Teams/Delete/@Model.TeamId">
+                    <button class="btn btn-danger" type="submit">Sterge echipa</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+<br />
+<br />
+
+<div class="d-flex flex-row justify-content-between p-3 border-1 border-top">
+    <a class="btn btn-success" href="/TeamMembers/Show/@Model.TeamId">Vizualizeaza echipa</a>
+</div>

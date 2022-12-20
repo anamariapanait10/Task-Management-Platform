@@ -1,0 +1,32 @@
+﻿@model TaskManagementApp.Models.Comment
+
+
+
+<div class="card p-3">
+    <div class="alert-secondary py-2 px-4 rounded-2">
+        <span><i class="bi bi-person"></i>@Model.User.UserName</span>
+    </div>
+
+    <div><b>Commented: </b> @Html.Raw(@Model.CommentContent)</div>
+    <div>
+        <small style="display: flex; justify-content: flex-end"><b>Date:  </b>@Model.CommentDate</small>
+    </div>
+    <br />
+
+    @if (ViewBag.EsteOrganizator || ViewBag.EsteAdmin)
+    {
+        <div class="d-flex justify-content-between">
+            <div>
+                <a class="btn btn-outline-primary  mx-2" href="/Comments/Edit/@Model.CommentId"><i class="bi bi-pencil-square"></i>Editeaza Comentariul</a>
+            </div>
+
+            <div>
+                <form method="post" action="/Comments/Delete/@Model.CommentId">
+                    <button class="btn btn-outline-danger  mx-2" type="submit"><i class="bi bi-trash"></i>Sterge Comentariul</button>
+                </form>
+
+            </div>
+
+        </div>
+    }
+</div>

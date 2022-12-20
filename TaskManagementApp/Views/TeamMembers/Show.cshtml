@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Show";
+}
+
+<h2>Pagina echipei</h2>
+<br />
+@if (ViewBag.Message != null)
+{
+    <h2 class="alert-success p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+}
+
+<br />
+
+<div class="card">
+
+    <h3 class="card-title alert-success py-3 px-3 rounded-2">@ViewBag.Team.TeamName</h3>
+    <br/>
+
+    <h4 class="card-title alert-success py-3 px-3 rounded-2">@ViewBag.Project.ProjectTitle</h4>
+    <br />
+
+    <h5 class="card-title alert-success py-3 px-3 rounded-2">Taskurile echipei</h5>
+
+    @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+    {
+        @Html.Partial("TaskInfo", task)           
+    }
+
+
+ </div>
+

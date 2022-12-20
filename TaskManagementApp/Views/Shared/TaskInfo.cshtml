@@ -1,0 +1,103 @@
+﻿@model TaskManagementApp.Models.Task
+
+
+
+<div class="card p-3">
+    <div class="alert-secondary py-2 px-4 rounded-2">
+        <span class="card-title d-block mb-0" style="font-size: 22px; font-weight: 400"><b>@Model.TaskTitle</b></span>
+        <span class="card-subtitle d-block" style="font-size: 14px; font-weight: 200">@Model.Project.ProjectTitle</span>
+    </div>
+
+    <div style="display: flex" class="p-3">
+        <div>
+            <table>
+                <tbody>
+                    @if (@Model.Stat != null)
+                    {
+                        <tr>
+                            <td style="padding-right: 10px">
+                                <i class="bi bi-pass"></i><b> Task status:</b>
+                            </td>
+                            <td>
+                                @Model.Stat.StatName
+                            </td>
+                        </tr>
+                    }
+                    @if (@Model.StartDate != null)
+                    {
+                        <tr>
+                            <td style="padding-right: 10px">
+                                <i class="bi bi-calendar2-check"></i> <b>Start date:</b>
+                            </td>
+                            <td>
+                                <span>@Model.StartDate</span>
+                            </td>
+                        </tr>
+
+                    }
+                    @if (@Model.DueDate != null)
+                    {
+                        <tr>
+                            <td style="padding-right: 10px">
+                                <i class="bi bi-calendar2-x"></i> <b>Due date:</b>
+                            </td>
+                            <td>
+                                <span>@Model.DueDate</span>
+                            </td>
+                        </tr>
+                    }
+                    @if (@Model.TeamMember != null)
+                    {
+                        <tr>
+                            <td style="padding-right: 10px">
+                                <i class="bi bi-person"></i> <b>Assigned to:</b>
+                            </td>
+                            <td>
+                                <span>@Model.TeamMember.User.UserName</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-left: 20px; padding-left:20px; border-left: 1px solid lightgray">
+            <b>Content: </b>
+            <span style="text-overflow: ellipsis">@Html.Raw(@Model.TaskContent)</span>
+        </div>
+    </div>
+
+
+    @if (ViewBag.AfisareButoane && (ViewBag.EsteAdmin || ViewBag.EsteOrganizator))
+    {
+        <div class="d-flex justify-content-between">
+            <div>
+                <form method="get" action="/Tasks/Edit/@Model.TaskId">
+                    <button class="btn btn-outline-primary mx-2" type="submit"><i class="bi bi-pencil-square"></i> Editeaza taskul</button>
+                </form>
+            </div>
+
+            @if (ViewBag.ButonAfisareTask)
+            {
+                <div>
+                    <a class="btn btn-outline-success mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-eye"></i> Afiseaza taskul</a>
+                </div>
+            }
+
+            <div>
+                <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                    <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Sterge taskul</button>
+                </form>
+            </div>
+        </div>
+    }
+    else if (ViewBag.ButonAfisareTask)
+    {
+        <div class="d-flex">
+            <div>
+                <a class="btn btn-outline-success mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-eye"></i> Afiseaza taskul</a>
+            </div>
+        </div>
+    }
+
+</div>
+

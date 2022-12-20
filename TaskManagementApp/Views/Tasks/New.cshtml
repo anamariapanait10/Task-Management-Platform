@@ -1,0 +1,67 @@
+﻿@model TaskManagementApp.Models.Task
+
+
+<h2 class="text-center mt-3">Adaugare task</h2>
+<div class="container mt-2">
+    <div class="row">
+        <div class="col-6 offset-3">
+
+            @using (Html.BeginForm(actionName: "New", controllerName: "Tasks",
+            method: FormMethod.Post))
+            {
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                @Html.Label("TaskTitle", "Titlu Task", new {@style="font-weight: bold"})
+                <br />
+                @Html.TextBox("TaskTitle", null, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.TaskTitle, "", new { @class = "text-danger" })
+                <br />
+
+                @Html.Label("TaskContent", "Continut Task", new {@style="font-weight: bold"})
+                <br />
+                @Html.TextArea("TaskContent", null, new { @class = "form-control summernote" })
+                @Html.ValidationMessage("TaskContent", null, new { @class = "text-danger" })
+                <br />
+
+                <label style="font-weight: bold">Selectati proiectul</label>
+                @Html.DropDownListFor(m => m.ProjectId, new SelectList(Model.ProjectsList, "Value", "Text"),
+            "Selectati Proiectul", new { @class = "form-control text-center" })
+                @Html.ValidationMessageFor(m => m.ProjectId, null, new { @class = "text-danger" })
+                <br />
+
+                @if (@Model.TeamMembersList != null)
+                {
+                    <label style="font-weight: bold">Selectati persoana</label>
+                    @Html.DropDownListFor(m => m.TeamMemberId, new SelectList(Model.TeamMembersList, "Value", "Text"),
+            "Selectati Persoana", new { @class = "form-control text-center" })
+                    @Html.ValidationMessageFor(m => m.TeamMemberId, null, new { @class = "text-danger" })
+                    <br />
+                }
+
+                <label style="font-weight: bold">Selectati statusul</label>
+                @Html.DropDownListFor(m => m.StatId, new SelectList(Model.StatsList, "Value", "Text"),
+            "Selectati Statusul", new { @class = "form-control text-center"  })
+                @Html.ValidationMessageFor(m => m.StatId, null, new { @class = "text-danger" })
+                <br />
+
+                @Html.Label("StartDate", "Task start date", new {@style="font-weight: bold"})
+                <br />
+                <input type="date" id="start" name="StartDate" class="form-control text-center">
+                <br />
+
+                @Html.Label("DueDate", "Task due date", new {@style="font-weight: bold"})
+                <br />
+                <input type="date" id="due" name="DueDate" class="form-control text-center">
+                <br />
+                <br />
+
+                <div class="text-center">
+                    <button class="btn btn-success" type="submit">Adauga taskul</button>
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>

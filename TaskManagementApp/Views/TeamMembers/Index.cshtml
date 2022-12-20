@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Afisare echipe</h2>
+<br />
+@if (ViewBag.Message != null)
+{
+    <h2 class="alert-success p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+}
+
+<br />
+
+@foreach (TaskManagementApp.Models.Team team in ViewBag.Teams)
+{
+    <div class="card">
+
+        <h3 class="card-title alert-success py-3 px-3 rounded-2">@team.TeamName</h3>
+
+        @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+        {
+            if (task.ProjectId == team.ProjectId)
+            {
+                @Html.Partial("TaskInfo", task)
+            }
+        }
+
+
+        <a class="btn btn-success" href="/Teams/Show/@team.TeamId">Afisare echipa</a>
+
+
+    </div>
+
+    <br />
+    <br />
+}

@@ -1,0 +1,133 @@
+﻿@model TaskManagementApp.Models.Task
+
+
+@* Afisarea unui task impreuna cu statusul *@
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+
+<br />
+
+<div class="card">
+
+    @Html.Partial("TaskInfo", Model)
+
+</div>
+
+
+<br />
+<br />
+
+@* Afisare comentarii impreuna cu butoanele de editare si stergere *@
+<h2 class="text-center">Comentarii</h2>
+@foreach (TaskManagementApp.Models.Comment comm in ViewBag.TasksComments)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+
+            <div class="col-md-8">
+
+                <div>
+                    @Html.Partial("CommentInfo", comm)
+                </div>
+                <br>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+}
+
+@* Afisarea paginata a comentariilor *@
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if (ViewBag.lastPage > 0)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@ViewBag.PaginationBaseUrl=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.lastPage; i++)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@ViewBag.PaginationBaseUrl=@i">
+                            @(
+                                i
+                                )
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item">
+                    <a class="page-link" href="@ViewBag.PaginationBaseUrl=@(ViewBag.lastPage)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <div>Nu exista comentarii disponibile </div>
+            }
+        </ul>
+    </nav>
+</div>
+
+
+@* Afisarea formularului in care se poate adauga un comentariu *@
+<br />
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-2"></div>
+
+        <div class="col-md-8">
+
+            <div class="card">
+
+                <form method="post" action="/Tasks/Show/@Model.TaskId">
+
+                    <div class="card-body">
+
+                        <input type="hidden" name="TaskId" value="@Model.TaskId" />
+
+                        <label style="font-weight: bold; font-size:17px" name="CommentContent"> Adauga un comentariu nou</label>
+                        <br />
+
+                        <textarea class="form-control summernote" name="CommentContent"></textarea>
+
+                        @Html.ValidationMessage("CommentContent", null, new { @class = "text-danger"})
+
+                        <br /><br />
+
+                        <div class="text-center">
+                            <button class="btn btn-success text-right" type="submit">Adauga comentariul</button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-2"></div>
+
+    </div>
+
+</div>
+
+@*
+<br />
+<div class="text-center">
+    <a class="btn btn-success" href="/Comments/New">Adauga un comentariu</a>
+</div>
+*@

@@ -1,0 +1,95 @@
+﻿@model TaskManagementApp.Models.Project
+
+
+@* Afisarea unui proiect impreuna cu echipa din care face parte *@
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+
+<br />
+
+<div class="card">
+
+    @Html.Partial("ProjectInfo", Model)
+
+    @* Afisare taskuri impreuna cu butoanele de editare si stergere *@
+
+    <div class="p-3 mb-0 pb-0 pt-2">
+        <h2 class="text-center">Taskuri</h2>
+        @if (ViewBag.ProjectsTasks != null)
+        {
+            @foreach (TaskManagementApp.Models.Task task in ViewBag.ProjectsTasks)
+            {
+                <div class="card-body">
+                    @Html.Partial("TaskInfo", task)
+                </div>
+            }
+        }
+    </div>
+
+    @* Afisarea paginata a taskurilor *@
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @if (ViewBag.lastPage > 0)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@ViewBag.PaginationBaseUrl=1" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    @for (int i = 1; i <= ViewBag.lastPage; i++)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@ViewBag.PaginationBaseUrl=@i">
+                                @(
+                                    i
+                                    )
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item">
+                        <a class="page-link" href="@ViewBag.PaginationBaseUrl=@(ViewBag.lastPage)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <div>Nu exista taskuri disponibile </div>
+                }
+            </ul>
+        </nav>
+    </div>
+
+    <br />
+
+    @* Afisarea butoane editare *@
+    <div class="d-flex flex-row justify-content-between p-3 border-1 border-top">
+
+        @if (ViewBag.AfisareButoane == true && (ViewBag.EsteOrganizator || ViewBag.EsteAdmin))
+        {
+
+            <a class="btn btn-success" href="/Projects/Edit/@Model.ProjectId">Editeaza proiect</a>
+
+            <a class="btn btn-success" href="/Tasks/New">Adauga un task</a>
+
+            <form method="post" action="/Projects/Delete/@Model.ProjectId">
+
+                <button class="btn btn-danger" type="submit">Sterge proiect</button>
+
+            </form>
+        }
+        else
+        {
+            <a class="btn btn-success" href="/Tasks/New">Adauga un task</a>
+        }
+
+    </div>
+</div>
