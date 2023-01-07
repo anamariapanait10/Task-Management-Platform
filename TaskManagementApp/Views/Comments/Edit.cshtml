@@ -5,27 +5,30 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Editare comentariu</h2>
-<br />
 
 
-@using (Html.BeginForm(controllerName: "Comments", actionName: "Edit",
-    method: FormMethod.Post, routeValues: new { id = Model.CommentId }))
+<div class="row">
+    <div class="col-6 offset-3">
+        <h2 class="text-center mt-3">Editare comentariu</h2>
+        <br />
+        @using (Html.BeginForm(controllerName: "Comments", actionName: "Edit",
+            method: FormMethod.Post, routeValues: new { id = Model.CommentId }))
 
-{
-    @Html.Label("Content", "Continut comentariu")
+        {
+            @Html.HiddenFor(t => t.TaskId, new {@Value=@Model.TaskId})
+            @Html.Label("Content", "Continut comentariu", new {@style="font-weight: bold"})
 
-    <br />
+            @Html.TextArea("Content", null, new { @class = "summernote" })
+            <br />
 
-    @Html.Editor("Content", new { @class = "form-control" })
-    <br />
+            @Html.ValidationMessage("Content", null, new { @class = "text-danger" })
 
-    @Html.ValidationMessage("Content", null, new { @class = "text-danger" })
+            <br />
 
-    <br />
-
-    <br />
-
-    <button class="btn  btn-primary" type="submit">Editeaza comentariul</button>
-
-}
+            <br />
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">Editeaza comentariul</button>
+            </div>
+        }
+    </div>
+</div>

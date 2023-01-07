@@ -19,15 +19,20 @@
 </form>
 
 
-@foreach (TaskManagementApp.Models.Comment comm in ViewBag.Comments)
-{
-    <div class="card">
+    @foreach (TaskManagementApp.Models.Comment comm in ViewBag.Comments)
+    {
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
 
-        @Html.Partial("CommentInfo", comm)
+                @Html.Partial("CommentInfo", comm)
 
-    </div>
-    <br />
-}
+            </div>
+        </div>
+        <br />
+    }
+
+
 
 @* Afisarea paginata a comentarilor *@
 <div class="d-flex justify-content-center">
