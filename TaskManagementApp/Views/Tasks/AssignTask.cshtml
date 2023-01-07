@@ -1,0 +1,40 @@
+﻿@model TaskManagementApp.Models.Task
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+<h2 class="text-center mt-5">Editare task</h2>
+<br />
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            @using (Html.BeginForm(actionName: "AssignTask", controllerName: "Tasks",
+            method: FormMethod.Post,
+            routeValues: new { id = Model.TaskId }))
+            {
+                @Html.HiddenFor(m => m.TaskTitle, new {@Value=@Model.TaskTitle })
+                <br />
+
+                @Html.HiddenFor(m => m.TaskContent, new {@Value=@Model.TaskContent })
+                <br />
+
+                @Html.HiddenFor(m => m.ProjectId, new {@Value=@Model.ProjectId })
+                <br />
+
+                <label>Selectati membrul echipei</label>
+                @Html.DropDownListFor(m => m.TeamMemberId, new SelectList(Model.TeamMembersList, "Value", "Text"),
+            "Selectati membrul echipei", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.TeamMemberId, null, new { @class = "text-danger" })
+                <br />
+                <br />
+
+                <button class="btn btn-sm btn-success" type="submit">Asigneaza taskul</button>
+            }
+        </div>
+    </div>
+</div>

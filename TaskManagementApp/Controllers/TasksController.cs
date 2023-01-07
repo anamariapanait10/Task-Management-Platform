@@ -388,25 +388,18 @@ namespace TaskManagementApp.Controllers
                 {
                     number = routeEnd;
                 }
-
-                var nr = Int32.Parse(number);
-                ViewBag.Project = db.Projects.Where(p => p.ProjectId == nr).First();
                 if (isOrganizer(task) || User.IsInRole("Admin"))
                 {
-                    task.StatsList = GetAvailableStats(task);
-                    if (task.TeamMember == null)
-                    {
-                        task.TeamMembersList = GetAvailableTeamMembers(task);
-                        return View(task);
-                    }
+                    task.TeamMembersList = GetAvailableTeamMembers(task);
+                    return View(task);
                 }
                 else
                 {
-                    TempData["message"] = "Nu aveti dreptul sa adaugati taskuri intr-o echipa care nu va apartine!";
+                    TempData["message"] = "Nu aveti dreptul sa asignati taskuri intr-o echipa care nu va apartine!";
                     return Redirect(returnUrl);
                 }
             }
-            TempData["message"] = "Nu puteti asigna taskuri daca nu va aflati in pagina unui proiect sau a unei echipe!";
+            TempData["message"] = "Nu puteti asigna taskuri daca nu va aflati in pagina unei echipe!";
             return Redirect(returnUrl);
         }
 
@@ -415,32 +408,32 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult AssignTask(int id, Task requestTask)
         {
-            Task task = db.Tasks.Find(id);
-            var sanitizer = new HtmlSanitizer();
+            Task task = db.Tasks.Include("Stat").Where(t => t.TaskId == id).First();
 
-            if (ModelState.IsValid)
+            if (isOrganizer(task) || User.IsInRole("Admin"))
             {
-                if (isOrganizer(task) || User.IsInRole("Admin"))
+                if (ModelState.IsValid && requestTask.TeamMemberId != null)
                 {
-
-                    task.TaskTitle = requestTask.TaskTitle;
-                    task.TaskContent = sanitizer.Sanitize(requestTask.TaskContent);
-                    task.StatId = requestTask.StatId;
-                    TempData["message"] = "Taskul a fost modificat";
+                    if (task.Stat.StatName == "Not Assigned")
+                    {
+                        Stat stat = db.Stats.Where(s => s.StatName == "Not Started").First();
+                        task.StatId = stat.StatId;
+                    }
+                    task.TeamMemberId = requestTask.TeamMemberId;
+                    TempData["message"] = "Taskul a fost asignat!";
                     db.SaveChanges();
                     return Redirect(returnUrl);
                 }
                 else
                 {
-                    TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui task daca nu sunteti organizator pe proiect";
-                    return Redirect(returnUrl);
+                    requestTask.TeamMembersList = GetAvailableTeamMembers(requestTask);
+                    return View(requestTask);
                 }
             }
             else
             {
-                requestTask.ProjectsList = GetAllProjects();
-                requestTask.StatsList = GetAllStats();
-                return View(requestTask);
+                TempData["message"] = "Nu aveti dreptul sa asignati un task daca nu sunteti organizator pe proiectul caruia acesta ii apartine!";
+                return Redirect(returnUrl);
             }
         }
 
@@ -520,9 +513,14 @@ namespace TaskManagementApp.Controllers
         {
             var selectList = new List<SelectListItem>();
 
+            var project = db.Projects.Find(task.ProjectId);
+
+            var team = db.Teams.Where(t => t.ProjectId == project.ProjectId).First();
+
             var teamMembers = from teamMember in db.TeamMembers
                                  .Include("User")
                               where teamMember.TeamMemberId != task.TeamMemberId
+                                    && teamMember.TeamId == team.TeamId
                               select teamMember;
 
             foreach (var member in teamMembers)
