@@ -21,7 +21,7 @@
 
                 @Html.Label("TaskContent", "Continut Task")
                 <br />
-                @Html.Editor("TaskContent", new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextArea("TaskContent", null, new { @class = "form-control summernote" })
 
                 @Html.ValidationMessageFor(m => m.TaskContent, null, new { @class = "text-danger" })
                 <br />
@@ -29,14 +29,14 @@
 
                 <label>Selectati statusul</label>
                 @Html.DropDownListFor(m => m.StatId,
-                    new SelectList(Model.StatsList, "Value", "Text"),
-                    "Selectati statusul", new { @class = "form-control" })
+            new SelectList(Model.StatsList, "Value", "Text"),
+            "Selectati statusul", new { @class = "form-control" })
                 @Html.ValidationMessageFor(m => m.StatId, null, new { @class = "text-danger" })
                 <br />
                 <br />
-
-                <button class="btn btn-sm btn-success" type="submit">Modifica taskul</button>
-
+                <div class="text-center">
+                    <button class="btn btn-sm btn-success" type="submit">Modifica taskul</button>
+                </div>
             }
         </div>
     </div>

@@ -27,8 +27,8 @@
                 <label style="font-weight: bold;margin-left:5%">@ViewBag.Project.ProjectTitle</label>
                 @Html.HiddenFor(m => m.ProjectId, new { Model.ProjectId })
                 @Html.ValidationMessageFor(m => m.ProjectId, null, new { @class = "text-danger" })
+                
                 <br />
-             
                 <div class="text-center">
                     <button class="btn btn-success" type="submit">Adauga taskul</button>
                 </div>
