@@ -449,6 +449,7 @@ namespace TaskManagementApp.Controllers
             ViewBag.AfisareButoane = false;
             ViewBag.EsteOrganizator = false;
             ViewBag.EsteAdmin = false;
+            ViewBag.Admin = 0;
 
             if (isOrganizer(team))
             {
@@ -460,6 +461,7 @@ namespace TaskManagementApp.Controllers
             {
                 ViewBag.AfisareButoane = true;
                 ViewBag.EsteAdmin = true;
+                ViewBag.Admin = _userManager.GetUserId(User);
             }
         }
     }

@@ -18,6 +18,7 @@ namespace TaskManagementApp.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<TeamMember> TeamMembers { get; set; }
         public DbSet<Stat> Stats { get; set; }
+        public object Configuration { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -27,10 +27,30 @@
                     @Html.Partial("UserInfo", user)
                     @if (ViewBag.AfisareButoane == true && ViewBag.EsteAdmin)
                     {
-                        @if (ViewBag.Organizer == @user.Id)
+                        @if (ViewBag.Organizer == @user.Id && ViewBag.Admin == @user.Id)
                         {
                             <div class="d-flex justify-content-center flex-row">
+                                <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrgDel/@user.Id/@Model.TeamId">Paraseste echipa</a>
+                            </div>
+                            <div class="d-flex justify-content-center flex-row">
                                 <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrg/@user.Id/@Model.TeamId">Revoca drepturi</a>
+                            </div>
+                        }
+                        else if (ViewBag.Organizer == @user.Id)
+                        {
+                            <div class="d-flex justify-content-center flex-row">
+                                <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrgDel/@user.Id/@Model.TeamId">Sterge organizator</a>
+                            </div>
+                            <div class="d-flex justify-content-center flex-row">
+                                <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrg/@user.Id/@Model.TeamId">Revoca drepturi</a>
+                            </div>
+                        }
+                        else if(ViewBag.Admin == @user.Id)
+                        {
+                            <div class="d-flex justify-content-center flex-row">
+                                <form method="post" action="/TeamMembers/Delete/@user.Id/@Model.TeamId">
+                                    <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Paraseste echipa</button>
+                                </form>
                             </div>
                         }
                         else

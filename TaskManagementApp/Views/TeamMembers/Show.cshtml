@@ -12,20 +12,183 @@
 <br />
 
 <div class="card">
-
-    <h3 class="card-title alert-success py-3 px-3 rounded-2">@ViewBag.Team.TeamName</h3>
+    <h1 class="text-center alert-success py-3 px-3 rounded-2">@ViewBag.Team.TeamName</h1>
     <br/>
-
-    <h4 class="card-title alert-success py-3 px-3 rounded-2">@ViewBag.Project.ProjectTitle</h4>
+    <br/>
+    <div>
+        <h2 class="card-title text-center">Proiectul asignat echipei:</h2>
+        <br/>
+        <div class="d-flex justify-content-sm-around flex-wrap" style="gap:20px">
+            <div class="card">
+                <h2 class="card-title text-center alert-success" style="background-color:white">@ViewBag.Project.ProjectTitle</h2>
+                <div class="d-flex justify-content-between flex-column mt-2 mx-4">
+                    <div class="card-text"><i class="bi bi-list-task"></i> <b>Description: </b>@Html.Raw(@ViewBag.Project.ProjectContent)</div>
+                </div>
+                @if(ViewBag.AfisareButoane == true && ViewBag.EsteAdmin) 
+                {
+                    <div class="d-flex justify-content-center flex-row" style="gap:20px">
+                        <a class="btn btn-success" href="/Projects/Edit/@ViewBag.Project.ProjectId">Editeaza proiect</a>
+                        <form method="post" action="/Projects/Delete/@ViewBag.Project.ProjectId">
+                            <button class="btn btn-danger" type="submit">Sterge proiect</button>
+                        </form>
+                    </div>
+                    <br/>
+                }
+                else if(ViewBag.AfisareButoane == true && ViewBag.EsteOrganizator)
+                {
+                    <div class="d-flex justify-content-center flex-row">
+                        <a class="btn btn-success" href="/Projects/Edit/@ViewBag.Project.ProjectId">Editeaza proiect</a>
+                    </div>
+                    <br/>
+                }
+            </div>
+        </div>
+    </div>
+    <br />
     <br />
 
-    <h5 class="card-title alert-success py-3 px-3 rounded-2">Taskurile echipei</h5>
+    <div>
+        <h2 class="card-title text-center">Membrii echipei:</h2>
+        <br />
+        <div class="d-flex justify-content-sm-around flex-wrap" style="gap:20px"">
+                @if (ViewBag.TeamMembers != null)
+                {
+                    @foreach (TaskManagementApp.Models.TeamMember member in ViewBag.TeamMembers)
+                    {
+                        <div class="card">
+                            @if (ViewBag.Organizer == @member.UserId)
+                            {
+                                <div class="d-flex justify-content-center flex-row">
+                                    <h6>ORGANIZATOR</h6>
+                                </div>
+                            }
+                            @Html.Partial("UserInfo", @member.User)
+                            @if (ViewBag.AfisareButoane == true && ViewBag.EsteAdmin)
+                            {
+                                @if (ViewBag.Organizer == @member.UserId && ViewBag.Admin == @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrgDel/@member.UserId/@ViewBag.Team.TeamId">Paraseste echipa</a>
+                                    </div>
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrg/@member.UserId/@ViewBag.Team.TeamId">Revoca drepturi</a>
+                                    </div>
+                                }
+                                else if (ViewBag.Organizer == @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrgDel/@member.UserId/@ViewBag.Team.TeamId">Sterge organizator</a>
+                                    </div>
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrg/@member.UserId/@ViewBag.Team.TeamId">Revoca drepturi</a>
+                                    </div>
+                                }
+                                else if (ViewBag.Admin == @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <form method="post" action="/TeamMembers/Delete/@member.UserId/@ViewBag.Team.TeamId">
+                                            <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Paraseste echipa</button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <form method="post" action="/TeamMembers/Delete/@member.UserId/@ViewBag.Team.TeamId">
+                                            <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Sterge membru</button>
+                                        </form>
+                                    </div>
+                                }
+                            }
+                            else if (ViewBag.AfisareButoane == true && ViewBag.EsteOrganizator)
+                            {
+                                @if (ViewBag.Organizer != @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <form method="post" action="/TeamMembers/Delete/@member.UserId/@ViewBag.Team.TeamId">
+                                            <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Sterge membru</button>
+                                        </form>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                }
+        </div>
+    </div>
+    <br />
+    <br />
 
-    @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
-    {
-        @Html.Partial("TaskInfo", task)           
-    }
+    <div class="p-3 mb-0 pb-0 pt-2">
+        <h2 class="text-center">Taskurile echipei</h2>
+        <br/> 
+        <div class="d-flex justify-content-sm-around flex-direction-column">
+            <div class="card" style="gap:10px;width:30%;height:250px;overflow-y:scroll">
+                <h4 class="card-title text-center alert-success" style="background-color:white">TO DO</h4>
+                @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+                {
+                    @if(task.Stat.StatName == "Not Assigned" || task.Stat.StatName == "Not Started")
+                    {
+                        <div class="card">
+                            <h6 class="card-title text-center alert-success" style="background-color:white">@task.TaskTitle</h6>
+                        </div>
+                    } 
+                }
+            </div>
+            <div class="card" style="gap:10px;width:30%;height:250px;overflow-y:scroll">
+                <h4 class="card-title text-center alert-success" style="background-color:white">IN PROGRESS</h4>
+                @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+                {
+                    @if(task.Stat.StatName == "In Progress")
+                    {
+                        <div class="card">
+                            <h6 class="card-title text-center alert-success" style="background-color:white">@task.TaskTitle</h6>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="card" style="gap:10px;width:30%;height:250px;overflow-y:scroll">
+                <h4 class="card-title text-center alert-success" style="background-color:white">COMPLETED</h4>
+                @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+                {
+                    @if(task.Stat.StatName == "Completed")
+                    {
+                        <div class="card">
+                            <h6 class="card-title text-center alert-success" style="background-color:white">@task.TaskTitle</h6>
+                    </div>
+                    }
+                }
+            </div>
+        </div>
+            <a class="btn btn-success" href="/Tasks/New">Adauga un task</a>
+    </div>
+                            
+  @*                              
+                                @if (ViewBag.AfisareButoane == true && ViewBag.EsteAdmin)
+                                {
+                                    <div class="d-flex justify-content-center flex-row" style="gap:20px">
+                                        <a class="btn btn-success" href="/Projects/Edit/@ViewBag.Project.ProjectId">Editeaza proiect</a>
+                                        <form method="post" action="/Projects/Delete/@ViewBag.Project.ProjectId">
+                                            <button class="btn btn-danger" type="submit">Sterge proiect</button>
+                                        </form>
+                                    </div>
+                                    <br />
+                                }
+                                else if (ViewBag.AfisareButoane == true && ViewBag.EsteOrganizator)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-success" href="/Projects/Edit/@ViewBag.Project.ProjectId">Editeaza proiect</a>
+                                    </div>
+                                    <br />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+    </div>
 
 
- </div>
-
+    
+        <br />
+        <br />*@

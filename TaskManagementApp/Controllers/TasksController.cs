@@ -37,7 +37,7 @@ namespace TaskManagementApp.Controllers
 
             _roleManager = roleManager;
         }
-        // Se afiseaza lista tuturor taskuri impreuna cu 
+        // Se afiseaza lista tuturor taskuri
         // Pentru fiecare task se afiseaza si userul care a postat taskul respectiv
         // HttpGet implicit
         [Authorize(Roles = "User,Admin")]
@@ -187,10 +187,7 @@ namespace TaskManagementApp.Controllers
         public IActionResult New()
         {
             Task task = new Task();
-
-            task.StatsList = GetAllStats();
-            task.ProjectsList = GetAllProjects();
-            task.TeamMembersList = GetAllTeamMembers();
+            
             // luam pagina de unde am venit ca sa stim unde sa ne intoarcem
             var spl = Request.Headers["Referer"].ToString().Substring(10);
             spl = spl.Substring(spl.IndexOf("/"));
@@ -210,35 +207,71 @@ namespace TaskManagementApp.Controllers
                 }
 
                 var nr = Int32.Parse(number);
-                task.ProjectsList = GetProject(nr);
-                task.TeamMembersList = GetAllTeamMembers(nr);
+                ViewBag.Project = db.Projects.Where(p => p.ProjectId == nr).First();
+                if(User.IsInRole("Admin") || _userManager.GetUserId(User) == ViewBag.Project.UserId)
+                {
+                    task.ProjectId = ViewBag.Project.ProjectId;
+                    return View(task);
+                }
+                else
+                {
+                    TempData["message"] = "Nu aveti dreptul sa adaugati taskuri unui proiect care nu va apartine!";
+                    return Redirect(returnUrl);
+                }
             }
+            if (Regex.Match(returnUrl, @"/TeamMembers/Show/*").Success)
+            {
+                string routeEnd = returnUrl.Substring(18);
+                string number = "";
+                if (routeEnd.Contains('?'))
+                {
+                    number = routeEnd.Substring(0, routeEnd.IndexOf('/'));
+                }
+                else
+                {
+                    number = routeEnd;
+                }
 
-            return View(task);
+                var nr = Int32.Parse(number);
+                ViewBag.Project = db.Projects.Where(p => p.ProjectId == nr).First();
+                if (User.IsInRole("Admin") || _userManager.GetUserId(User) == ViewBag.Project.UserId)
+                {
+                    task.ProjectId = ViewBag.Project.ProjectId;
+
+                    return View(task);
+                }
+                else
+                {
+                    TempData["message"] = "Nu aveti dreptul sa adaugati taskuri intr-o echipa care nu va apartine!";
+                    return Redirect(returnUrl);
+                }
+            }
+            TempData["message"] = "Nu puteti adauga taskuri daca nu va aflati in pagina unui proiect sau a unei echipe!";
+            return Redirect(returnUrl);
         }
 
         // Se adauga taskul in baza de date
-
         [Authorize(Roles = "User,Admin")]
         [HttpPost]
         public IActionResult New(Task task)
         {
             var sanitizer = new HtmlSanitizer();
-            if (isOrganizer(task) || User.IsInRole("Admin"))
+            var proj = db.Projects.Where(p => p.ProjectId == task.ProjectId).First();
+            if (_userManager.GetUserId(User) == proj.UserId || User.IsInRole("Admin"))
             {
-                task.StartDate = DateTime.Now;
+                Stat stat = db.Stats.Where(s => s.StatName == "Not Assigned").First();
+                task.StatId = stat.StatId;
 
                 if (ModelState.IsValid)
                 {
                     task.TaskContent = sanitizer.Sanitize(task.TaskContent);
                     db.Tasks.Add(task);
                     db.SaveChanges();
-                    TempData["message"] = "Taskul a fost adaugat";
+                    TempData["message"] = "Taskul a fost adaugat!";
                     return Redirect(returnUrl);
                 }
                 else
                 {
-                    task.StatsList = GetAllStats();
                     return View(task);
                 }
             }
@@ -251,26 +284,29 @@ namespace TaskManagementApp.Controllers
                    errors, Formatting.Indented,
                    new JsonConverter[] { new StringEnumConverter() });
                 Console.WriteLine(jsonString);
-                TempData["message"] = "Nu aveti drepturi";
+                TempData["message"] = "Nu aveti drepturi!";
                 return Redirect(returnUrl);
             }
         }
 
-
-        // Se editeaza un task existent in baza de date impreuna cu 
-        // Statusul se selecteaza dintr-un dropdown
-        // HttpGet implicit
-        // Se afiseaza formularul impreuna cu datele aferente taskului
-        // din baza de date
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id)
-        {
-
+        {   
             Task task = db.Tasks.Include("Stat")
                                         .Where(t => t.TaskId == id)
                                         .First();
+            if(task != null)
+            {
+                if(isOrganizer(task) || User.IsInRole("Admin"))
+                {
+                    task.StatsList = GetAvailableStats(task);
+                    if(task.TeamMember == null)
+                    {
+                        task.TeamMembersList = GetAvailableTeamMembers(task);
+                    }
+                }
 
-            task.StatsList = GetAllStats();
+            }
 
             if (isOrganizer(task) || User.IsInRole("Admin"))
             {
@@ -294,6 +330,90 @@ namespace TaskManagementApp.Controllers
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id, Task requestTask)
+        {
+            Task task = db.Tasks.Find(id);
+            var sanitizer = new HtmlSanitizer();
+
+            if (ModelState.IsValid)
+            {
+                if (isOrganizer(task) || User.IsInRole("Admin"))
+                {
+
+                    task.TaskTitle = requestTask.TaskTitle;
+                    task.TaskContent = sanitizer.Sanitize(requestTask.TaskContent);
+                    task.StatId = requestTask.StatId;
+                    TempData["message"] = "Taskul a fost modificat";
+                    db.SaveChanges();
+                    return Redirect(returnUrl);
+                }
+                else
+                {
+                    TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui task daca nu sunteti organizator pe proiect";
+                    return Redirect(returnUrl);
+                }
+            }
+            else
+            {
+                requestTask.ProjectsList = GetAllProjects();
+                requestTask.StatsList = GetAllStats();
+                return View(requestTask);
+            }
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult AssignTask(int id)
+        {
+            // luam pagina de unde am venit ca sa stim unde sa ne intoarcem
+            var spl = Request.Headers["Referer"].ToString().Substring(10);
+            spl = spl.Substring(spl.IndexOf("/"));
+            returnUrl = spl;
+
+            Task task = db.Tasks.Include("Stat")
+                                        .Where(t => t.TaskId == id)
+                                        .First();
+            if (task == null)
+            {
+                TempData["message"] = "Nu exista taskul dorit!";
+                return Redirect(returnUrl);
+            }
+            if (Regex.Match(returnUrl, @"/TeamMembers/Show/*").Success)
+            {
+                string routeEnd = returnUrl.Substring(18);
+                string number = "";
+                if (routeEnd.Contains('?'))
+                {
+                    number = routeEnd.Substring(0, routeEnd.IndexOf('/'));
+                }
+                else
+                {
+                    number = routeEnd;
+                }
+
+                var nr = Int32.Parse(number);
+                ViewBag.Project = db.Projects.Where(p => p.ProjectId == nr).First();
+                if (isOrganizer(task) || User.IsInRole("Admin"))
+                {
+                    task.StatsList = GetAvailableStats(task);
+                    if (task.TeamMember == null)
+                    {
+                        task.TeamMembersList = GetAvailableTeamMembers(task);
+                        return View(task);
+                    }
+                }
+                else
+                {
+                    TempData["message"] = "Nu aveti dreptul sa adaugati taskuri intr-o echipa care nu va apartine!";
+                    return Redirect(returnUrl);
+                }
+            }
+            TempData["message"] = "Nu puteti asigna taskuri daca nu va aflati in pagina unui proiect sau a unei echipe!";
+            return Redirect(returnUrl);
+        }
+
+        // Se adauga articolul modificat in baza de date
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult AssignTask(int id, Task requestTask)
         {
             Task task = db.Tasks.Find(id);
             var sanitizer = new HtmlSanitizer();
@@ -348,6 +468,26 @@ namespace TaskManagementApp.Controllers
             }
         }
 
+        public ActionResult PopulateTeamMembers(string PId)
+        {
+            var members = new List<SelectListItem>();
+            var team = db.Teams.Where(t => t.ProjectId.ToString() == PId).First();
+            if(team != null)
+            {
+                return Json(members);
+            }
+            var tMembs = db.TeamMembers.Include("User").Where(tm => tm.TeamId == team.TeamId);
+            foreach (var teamMember in tMembs)
+            {
+                members.Add(new SelectListItem
+                {
+                    Value = teamMember.TeamMemberId.ToString(),
+                    Text = teamMember.User.UserName.ToString()
+                });
+            }
+            return Json(members);
+        }
+
         [NonAction]
         public IEnumerable<SelectListItem> GetAllStats()
         {
@@ -356,6 +496,7 @@ namespace TaskManagementApp.Controllers
 
             // extragem toate statusurile din baza de date
             var stats = from stat in db.Stats
+                        where stat.StatName != "Not Assigned"
                         select stat;
 
             // iteram prin statusuri
@@ -371,6 +512,93 @@ namespace TaskManagementApp.Controllers
             }
 
             // returnam lista de statusuri
+            return selectList;
+        }
+
+        [NonAction]
+        public IEnumerable<SelectListItem> GetAvailableTeamMembers(Task task)
+        {
+            var selectList = new List<SelectListItem>();
+
+            var teamMembers = from teamMember in db.TeamMembers
+                                 .Include("User")
+                              where teamMember.TeamMemberId != task.TeamMemberId
+                              select teamMember;
+
+            foreach (var member in teamMembers)
+            {
+                selectList.Add(new SelectListItem
+                {
+                    Value = member.TeamMemberId.ToString(),
+                    Text = member.User.UserName.ToString()
+                });
+            }
+            return selectList;
+        }
+
+        [NonAction]
+        public IEnumerable<SelectListItem> GetAvailableStats(Task task)
+        {
+            // generam o lista de tipul SelectListItem fara elemente
+            var selectList = new List<SelectListItem>();
+
+            // extragem toate statusurile din baza de date
+            var stats = from stat in db.Stats
+                        where stat.StatId != task.StatId
+                        select stat;
+
+            // iteram prin statusuri
+            foreach (var stat in stats)
+            {
+                // adaugam in lista elementele necesare pentru dropdown
+                // id-ul statusului si denumirea acestuia
+                if (task.TeamMemberId != null)
+                {
+                    if (stat.StatName != "Not Assigned")
+                    {
+                        selectList.Add(new SelectListItem
+                        {
+                            Value = stat.StatId.ToString(),
+                            Text = stat.StatName.ToString()
+                        });
+                    }
+                }
+            }
+            // returnam lista de statusuri
+            return selectList;
+        }
+
+        [NonAction]
+        public bool HasProjects(string UId)
+        {
+            var projects = from proj in db.Projects
+                           where proj.UserId == UId
+                           select proj;
+
+            if (projects.Count() > 0)
+                return true;
+            else
+                return false;
+        }
+
+        [NonAction]
+        public IEnumerable<SelectListItem> GetUserProjects(string UId)
+        {
+            var selectList = new List<SelectListItem>();
+
+            var projects = from proj in db.Projects
+                           where proj.UserId == UId
+                           select proj;
+
+            foreach (var project in projects)
+            {
+                selectList.Add(new SelectListItem
+                {
+                    Value = project.ProjectId.ToString(),
+                    Text = project.ProjectTitle.ToString()
+                });
+            }
+
             return selectList;
         }
 
@@ -437,19 +665,6 @@ namespace TaskManagementApp.Controllers
                 });
             }
 
-            return selectList;
-        }
-
-        [NonAction]
-        public IEnumerable<SelectListItem> GetProject(int id)
-        {
-            var selectList = new List<SelectListItem>();
-            var project = db.Projects.Where(p => p.ProjectId == id).First();
-            selectList.Add(new SelectListItem
-            {
-                Value = project.ProjectId.ToString(),
-                Text = project.ProjectTitle.ToString()
-            });
             return selectList;
         }
 

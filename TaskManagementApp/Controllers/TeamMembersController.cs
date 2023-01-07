@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Versioning;
+using System;
 using System.Data;
 using System.Drawing.Printing;
 using System.Net.WebSockets;
+using System.Security.Cryptography;
 using TaskManagementApp.Data;
 using TaskManagementApp.Models;
 
@@ -55,14 +57,27 @@ namespace TaskManagementApp.Controllers
             Project proj = db.Projects.Find(team.ProjectId);
             ViewBag.Project = db.Projects.Find(team.ProjectId);
 
+            ViewBag.Organiser = db.Users.Find(proj.UserId);
+
+            ViewBag.Stats = db.Stats;
+
+
             ViewBag.Tasks = db.Tasks
                                 .Include("Stat")
                                 .Include("Project")
                                 .Include("TeamMember")
                                 .Where(t => t.ProjectId == proj.ProjectId);
+            
             ViewBag.Users = db.Users;
-            ViewBag.TeamMembers = db.TeamMembers.Include("User");
+            ViewBag.TeamMembers = db.TeamMembers.Include("User").Include("Team").Where(tm => tm.TeamId == team.TeamId);
             SetAccessRights();
+            ViewBag.EsteOrganizator = false;
+            ViewBag.Organizer = proj.UserId;
+            if (proj.UserId == _userManager.GetUserId(User))
+            {
+                ViewBag.AfisareButoane = true;
+                ViewBag.EsteOrganizator = true;
+            }
             return View();
         }
 
@@ -78,9 +93,9 @@ namespace TaskManagementApp.Controllers
             Project proj = db.Projects
                                  .Where(p => p.ProjectId == team.ProjectId)
                                  .First();
-
             if (proj.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
+
                 db.TeamMembers.Remove(member);
                 db.SaveChanges();
                 TempData["message"] = "Membrul a fost sters";
@@ -94,7 +109,6 @@ namespace TaskManagementApp.Controllers
                 return Redirect("/Teams/Show/" + TId);
             }
         }
-
         [NonAction]
         private void SetAccessRights()
         {
@@ -102,11 +116,13 @@ namespace TaskManagementApp.Controllers
             ViewBag.EsteAdmin = false;
             ViewBag.EsteOrganizator = false;
             ViewBag.ButonAfisareTask = true;
+            ViewBag.Admin = 0;
 
             if (User.IsInRole("Admin"))
             {
                 ViewBag.AfisareButoane = true;
                 ViewBag.EsteAdmin = true;
+                ViewBag.Admin = _userManager.GetUserId(User);
             }
         }
     }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -322,6 +323,81 @@ namespace TaskManagementApp.Controllers
                 TempData["message"] = "Nu ati selectat niciun alt organizator!";
                 TempData["messageType"] = "alert-danger";
                 return Redirect("/Projects/EditOrg/" + UId + "/" + TId);
+            }
+        }
+        // Se atribuie proiectul altui membru al echipei
+        [Route("Projects/EditOrgDel/{UId}/{TId}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditOrgDel(string UId, int TId)
+        {
+            Team team = db.Teams.Find(TId);
+            Project project = db.Projects.Where(p => p.ProjectId == team.ProjectId).First();
+
+            project.UsersList = GetMembers(UId, TId);
+            ViewBag.ProjEditOrgOrg = UId;
+            ViewBag.ProjEditOrgTeam = TId;
+
+            if (User.IsInRole("Admin"))
+            {
+                if (project.UsersList.Count() == 0)
+                {
+                    if(UId == _userManager.GetUserId(User))
+                    {
+                        TempData["message"] = "Sunteti ultimul membru din echipa si nu puteti parasi echipa!" + "\n" + "Stergeti echipa?";
+                        TempData["messageType"] = "alert-danger";
+                        return Redirect("/Teams/Show/" + TId);
+                    }
+                    TempData["message"] = "Aceste este ultimul membru din echipa si nu il puteti elimina!" + "\n" + "Stergeti echipa?";
+                    TempData["messageType"] = "alert-danger";
+                    return Redirect("/Teams/Show/" + TId);
+                }
+                TempData["message"] = "Inainte sa stergeti organizatorul trebuie sa selectati alt organizator!";
+                TempData["messageType"] = "alert-danger";
+                return View(project);
+            }
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa modificati organizatorul proiectului";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Teams/Show/" + TId);
+            }
+        }
+        // Se adauga proiectul modificat in baza de date
+        [HttpPost]
+        [Route("/Projects/EditOrgDel/{UId}/{TId}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditOrgDel(string UId, int TId, Project requestProject)
+        {
+            TeamMember member = db.TeamMembers
+                                        .Where(tm => tm.UserId == UId && tm.TeamId == TId)
+                                        .First();
+            Team team = db.Teams.Find(TId);
+            Project proj = db.Projects
+                                 .Where(p => p.ProjectId == team.ProjectId)
+                                 .First();
+            if (ModelState.IsValid)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    proj.UserId = requestProject.UserId;
+                    db.TeamMembers.Remove(member);
+                    TempData["message"] = "Organizatorul de proiect a fost modificat, iar cel vechi sters";
+                    TempData["messageType"] = "alert-success";
+                    db.SaveChanges();
+                    return Redirect("/Teams/Show/" + TId);
+                }
+                else
+                {
+                    TempData["message"] = "Nu aveti dreptul sa modificati organizatorul proiectului";
+                    TempData["messageType"] = "alert-danger";
+                    return Redirect("/Teams/Show/" + TId);
+                }
+            }
+            else
+            {
+                TempData["message"] = "Nu ati selectat niciun alt organizator!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Projects/EditOrgDel/" + UId + "/" + TId);
             }
         }
         [NonAction]

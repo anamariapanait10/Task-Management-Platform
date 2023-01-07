@@ -18,17 +18,17 @@
             routeValues: new { UId = ViewBag.ProjEditOrgOrg,TId = ViewBag.ProjEditOrgTeam }))
             {
                 <br />
-                @Html.HiddenFor(m => m.ProjectTitle, new { Model.ProjectTitle })
+                    @Html.HiddenFor(m => m.ProjectTitle, new { Model.ProjectTitle })
                 <br />
 
                 <br />
-                @Html.HiddenFor(m => m.ProjectContent, new { Model.ProjectContent })
+                    @Html.HiddenFor(m => m.ProjectContent, new { Model.ProjectContent })
                 <br />
-                
+
                 <label>Selectati noul organizator</label>
-                <select class="form-control" asp-for="UserId" asp-items="Model.UsersList">
-                    <option disabled selected value="null">Selectati noul organizator</option>
-                </select>
+                    <select class="form-control" asp-for="UserId" asp-items="Model.UsersList">
+                           <option disabled selected value="null">Selectati noul organizator</option>
+                    </select>
 
                 <button class="btn btn-sm btn-success" type="submit">Reatribuie proiectul</button>
             }
