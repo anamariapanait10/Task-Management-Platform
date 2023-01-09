@@ -686,13 +686,17 @@ namespace TaskManagementApp.Controllers
                 return;
             }
 
-            if(task.TeamMember.UserId == _userManager.GetUserId(User))
+            if (task.TeamMemberId != null)
             {
-                ViewBag.AfisareButoane = true;
-                ViewBag.UserAsign = true;
-                return;
+                if (task.TeamMember.UserId == _userManager.GetUserId(User))
+                {
+                    ViewBag.AfisareButoane = true;
+                    ViewBag.UserAsign = true;
+                    return;
+                }
             }
         }
+
 
         [NonAction]
         private void SetAccessRights()
