@@ -230,10 +230,41 @@ namespace TaskManagementApp.Models
                     },
                     new Project
                     {
-                        ProjectTitle = "ArticolesApp",
+                        ProjectTitle = "ArticlesApp",
                         ProjectContent = "Vrem sa creem o aplicatie sa permita utilizatorilor sa urmareasca stiri, sa citeasca articole si documentare, din diverse domenii care ii atrag.",
                         ProjectDate = new DateTime(2022, 10, 4, 16, 05, 30),
                         UserId = "8e445865-a24d-4543-a6c6-9443d048cdb0"
+                    }
+                    );
+                    context.SaveChanges();
+                }
+
+                if (!context.Teams.Any())
+                {
+                    context.Teams.AddRange(
+                    new Team
+                    {
+                        TeamName = "ASP Task Management",
+                        TeamDate = new DateTime(2022, 12, 12, 13, 13, 13),
+                        ProjectId = 1,
+                    },
+                    new Team
+                    {
+                        TeamName = "SO #Nr.1",
+                        TeamDate = new DateTime(2022, 10, 23, 22, 30, 15),
+                        ProjectId = 2,
+                    },
+                    new Team
+                    {
+                        TeamName = "TopTeam SO",
+                        TeamDate = new DateTime(2022, 10, 22, 17, 32, 45),
+                        ProjectId = 3,
+                    },
+                    new Team
+                    {
+                        TeamName = "Laborator ASP",
+                        TeamDate = new DateTime(2022, 12, 24, 8, 00, 00),
+                        ProjectId = 5,
                     }
                     );
                     context.SaveChanges();
@@ -242,3 +273,4 @@ namespace TaskManagementApp.Models
         }
     }
 }
+
