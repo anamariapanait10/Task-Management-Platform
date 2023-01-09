@@ -9,18 +9,15 @@
 <br />
 
 <script type="text/javascript">
-    function SetMinSD()
-    {
+    function SetMinSD() {
         var today = new Date();
         var dd = today.getDate();
         var mm = today.getMonth() + 1;
         var yyyy = today.getFullYear();
-        if (dd < 10) 
-        {
+        if (dd < 10) {
             dd = '0' + dd
         }
-        if (mm < 10) 
-        {
+        if (mm < 10) {
             mm = '0' + mm
         }
 
@@ -39,7 +36,7 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-6 offset-3">
-            @using (Html.BeginForm(actionName: "AssignTask", controllerName: "Tasks",
+            @using (Html.BeginForm(actionName: "ChangeDate", controllerName: "Tasks",
             method: FormMethod.Post,
             routeValues: new { id = Model.TaskId }))
             {
@@ -52,13 +49,6 @@
                 @Html.HiddenFor(m => m.ProjectId, new {@Value=@Model.ProjectId })
                 <br />
 
-                <label>Selectati membrul echipei</label>
-                @Html.DropDownListFor(m => m.TeamMemberId, new SelectList(Model.TeamMembersList, "Value", "Text"),
-            "Selectati membrul echipei", new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.TeamMemberId, null, new { @class = "text-danger" })
-                <br />
-                <br />
-
                 <label for="StartDate">Start Date:</label>
                 <input type="date" id="StartDate" name="StartDate" style="margin-left:10px" onfocus="SetMinSD()" onchange="myChangeFunction(this)">
                 <br />
@@ -69,7 +59,7 @@
                 <br />
                 <br />
 
-                <button class="btn btn-sm btn-success" type="submit">Asigneaza taskul</button>
+                <button class="btn btn-sm btn-success" type="submit">Modifica date</button>
             }
         </div>
     </div>

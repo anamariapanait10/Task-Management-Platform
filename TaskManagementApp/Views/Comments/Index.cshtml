@@ -18,8 +18,6 @@
     </div>
 </form>
 
-
-<<<<<<< HEAD
 @foreach (TaskManagementApp.Models.Comment comm in ViewBag.Comments)
 {
     <div class="row">
@@ -32,24 +30,6 @@
     </div>
     <br />
 }
-=======
-    @foreach (TaskManagementApp.Models.Comment comm in ViewBag.Comments)
-    {
-        <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-
-                @Html.Partial("CommentInfo", comm)
-
-            </div>
-        </div>
-        <br />
-    }
-
-
->>>>>>> 05523b9e472fdc3696c692ace11cf41b975b3c6f
-
-
 
 @* Afisarea paginata a comentarilor *@
 <div class="d-flex justify-content-center">

@@ -13,8 +13,121 @@
 <br />
 
 <div class="card">
+    <div class="card p-3">
+        @Html.Partial("TaskInfo", Model)
+        @if (@Model.Stat.StatName == "Not Assigned")
+        {
+            @if (ViewBag.AfisareButoane && (ViewBag.EsteAdmin || ViewBag.EsteOrganizator))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Edit/@Model.TaskId" style="float:right"><i class="bi bi-body-text"></i>Editeaza Descriere</a>
+                    </div>
 
-    @Html.Partial("TaskInfo", Model)
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/AssignTask/@Model.TaskId" style="float:right"><i class="bi bi-person-lines-fill"></i>Asigneaza Task</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Show/@Model.TaskId" style="float:right"><i class="bi bi-eye"></i> Comentarii</a>
+                    </div>
+
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Sterge taskul</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else if (@Model.Stat.StatName == "Not Started")
+        {
+            @if (ViewBag.AfisareButoane && (ViewBag.EsteAdmin || ViewBag.EsteOrganizator))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Edit/@Model.TaskId" style="float:right"><i class="bi bi-body-text"></i>Editeaza Descriere</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/AssignTask/@Model.TaskId" style="float:right"><i class="bi bi-person-lines-fill"></i>Reasigneaza Task</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeDate/@Model.TaskId" style="float:right"><i class="bi bi-calendar-event"></i>Editeaza Date</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Editeaza Status</a>
+                    </div>
+
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Sterge taskul</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Editeaza Status</a>
+                    </div>
+                </div>
+            }
+        }
+        else if (@Model.Stat.StatName == "In Progress")
+        {
+            @if (ViewBag.AfisareButoane && (ViewBag.EsteAdmin || ViewBag.EsteOrganizator))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Edit/@Model.TaskId" style="float:right"><i class="bi bi-body-text"></i>Editeaza Descriere</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/AssignTask/@Model.TaskId" style="float:right"><i class="bi bi-person-lines-fill"></i>Reasigneaza Task</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeDate/@Model.TaskId" style="float:right"><i class="bi bi-calendar-event"></i>Editeaza Date</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Editeaza Status</a>
+                    </div>
+
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Sterge taskul</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Editeaza Status</a>
+                    </div>
+                </div>
+            }
+        }
+        else if (@Model.Stat.StatName == "Completed")
+        {
+            @if (ViewBag.AfisareButoane && (ViewBag.EsteAdmin || ViewBag.EsteOrganizator))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Sterge taskul</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 
 </div>
 

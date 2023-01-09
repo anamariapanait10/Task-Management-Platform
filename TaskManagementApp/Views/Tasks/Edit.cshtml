@@ -9,8 +9,8 @@
             method: FormMethod.Post,
             routeValues: new { id = Model.TaskId }))
             {
-
                 @Html.HiddenFor(t => t.ProjectId, new {@Value=@Model.ProjectId})
+
                 @Html.Label("Title", "Titlu Task")
                 <br />
                 @Html.EditorFor(m => m.TaskTitle, new { htmlAttributes = new { @class = "form-control" } })
@@ -26,14 +26,7 @@
                 @Html.ValidationMessageFor(m => m.TaskContent, null, new { @class = "text-danger" })
                 <br />
                 <br />
-
-                <label>Selectati statusul</label>
-                @Html.DropDownListFor(m => m.StatId,
-            new SelectList(Model.StatsList, "Value", "Text"),
-            "Selectati statusul", new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.StatId, null, new { @class = "text-danger" })
-                <br />
-                <br />
+             
                 <div class="text-center">
                     <button class="btn btn-sm btn-success" type="submit">Modifica taskul</button>
                 </div>

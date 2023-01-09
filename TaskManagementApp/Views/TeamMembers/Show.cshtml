@@ -137,7 +137,8 @@
                                     @if(task.Stat.StatName == "Not Assigned")
                                     {
                                     <li class="card list-item" style="margin:5px;border-radius:5px">
-                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/AssignTask/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-person-lines-fill" style="font-size:small">Assign</i></a></div>
+                                            <!--<div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/AssignTask/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-person-lines-fill" style="font-size:small">Assign</i></a></div>-->
+                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
                                     </li>
                                     } 
                                 } 
@@ -159,7 +160,7 @@
                                     @if (task.Stat.StatName == "Not Started")
                                     {
                                         <li class="card list-item" style="margin:5px;border-radius:5px">
-                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle</div>
+                                            <div style="font-size:medium;margin:10px">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
                                         </li>
                                     }
                                 }
@@ -179,7 +180,7 @@
                                     @if(task.Stat.StatName == "In Progress")
                                     {
                                         <li class="card list-item" style="margin:5px;border-radius:5px">
-                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle</div>
+                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
                                         </li>
                                     }
                                 }
@@ -199,7 +200,7 @@
                                     @if(task.Stat.StatName == "Completed")
                                     {
                                         <li class="card list-item" style="margin:5px;border-radius:5px">
-                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle</div>
+                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
                                         </li>
                                     }
                                 }

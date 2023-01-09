@@ -8,6 +8,7 @@ using System.Data;
 using System.Threading.Tasks;
 using TaskManagementApp.Data;
 using TaskManagementApp.Models;
+using Task = TaskManagementApp.Models.Task;
 
 namespace TaskManagementApp.Controllers
 {
@@ -250,20 +251,48 @@ namespace TaskManagementApp.Controllers
                             .Include("Project")
                             .Where(t => t.TeamId == id)
                             .First();
-            Project proj = db.Projects
-                                 .Where(p => p.ProjectId == team.ProjectId)
-                                 .First();
-
+           Project proj = db.Projects
+                            .Where(p => p.ProjectId == team.ProjectId)
+                            .First();
             if (proj.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
+                var tasks = db.Tasks.Where(t => t.ProjectId == proj.ProjectId);
+                if (tasks.Count() > 0)
+                {
+                    foreach (Task t in tasks)
+                    {
+                        var comments = db.Comments.Where(c => c.TaskId == t.TaskId);
+                        if (comments.Count() > 0)
+                        {
+                            foreach (Comment c in comments)
+                            {
+                                db.Comments.Remove(c);
+                                db.SaveChanges();
+                            }
+                        }
+                    }
+                }
+                var members = db.TeamMembers.Where(tm => tm.TeamId == team.TeamId);
+
+                if (members.Count() > 0)
+                {
+                    foreach (TeamMember m in members)
+                    {
+                        db.TeamMembers.Remove(m);
+                        db.SaveChanges();
+                    }
+
+                }
                 db.Teams.Remove(team);
                 db.SaveChanges();
-                TempData["message"] = "Echipa a fost stearsa";
+                TempData["message"] = "Echipa a fost stearsa!";
+                TempData["messageType"] = "alert-succes";
                 return RedirectToAction("Index");
             }
             else
             {
-                TempData["message"] = "Nu aveti dreptul sa stergeti o echipa care nu va apartine";
+                TempData["message"] = "Nu aveti dreptul sa stergeti aceasta echipa!";
+                TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Index");
             }
         }

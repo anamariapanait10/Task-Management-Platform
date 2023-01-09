@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using TaskManagementApp.Data;
 using TaskManagementApp.Models;
@@ -114,11 +115,11 @@ namespace TaskManagementApp.Controllers
                 .Include("Project")
                 .Include("Stat")
                 .Include("TeamMember")
+                .Include("TeamMember.User")
                 .Include("Comments")
                 .Include("Comments.User")
                 .Where(t => t.TaskId == id)
                 .First();
-
 
             var comments = db.Comments
                                 .Include("User")
@@ -216,6 +217,7 @@ namespace TaskManagementApp.Controllers
                 else
                 {
                     TempData["message"] = "Nu aveti dreptul sa adaugati taskuri unui proiect care nu va apartine!";
+                    TempData["messageType"] = "alert-danger";
                     return Redirect(returnUrl);
                 }
             }
@@ -243,10 +245,12 @@ namespace TaskManagementApp.Controllers
                 else
                 {
                     TempData["message"] = "Nu aveti dreptul sa adaugati taskuri intr-o echipa care nu va apartine!";
+                    TempData["messageType"] = "alert-danger";
                     return Redirect(returnUrl);
                 }
             }
             TempData["message"] = "Nu puteti adauga taskuri daca nu va aflati in pagina unui proiect sau a unei echipe!";
+            TempData["messageType"] = "alert-danger";
             return Redirect(returnUrl);
         }
 
@@ -268,6 +272,7 @@ namespace TaskManagementApp.Controllers
                     db.Tasks.Add(task);
                     db.SaveChanges();
                     TempData["message"] = "Taskul a fost adaugat!";
+                    TempData["messageType"] = "alert-succes";
                     return Redirect(returnUrl);
                 }
                 else
@@ -285,45 +290,39 @@ namespace TaskManagementApp.Controllers
                    new JsonConverter[] { new StringEnumConverter() });
                 Console.WriteLine(jsonString);
                 TempData["message"] = "Nu aveti drepturi!";
+                TempData["messageType"] = "alert-danger";
                 return Redirect(returnUrl);
             }
         }
 
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id)
-        {   
-            Task task = db.Tasks.Include("Stat")
-                                        .Where(t => t.TaskId == id)
-                                        .First();
+        {
+            // luam pagina de unde am venit ca sa stim unde sa ne intoarcem
+            var spl = Request.Headers["Referer"].ToString().Substring(10);
+            spl = spl.Substring(spl.IndexOf("/"));
+            returnUrl = spl;
+
+            Task task = db.Tasks.Include("Stat").Where(t => t.TaskId == id).First();
             if(task != null)
             {
-                if(isOrganizer(task) || User.IsInRole("Admin"))
+                if (isOrganizer(task) || User.IsInRole("Admin"))
                 {
-                    task.StatsList = GetAvailableStats(task);
-                    if(task.TeamMember == null)
-                    {
-                        task.TeamMembersList = GetAvailableTeamMembers(task);
-                    }
+                    return View(task);
                 }
-
+                else
+                {
+                    TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui task daca nu sunteti organizatorul proiectului de care apartine acesta!";
+                    TempData["messageType"] = "alert-danger";
+                    return Redirect(returnUrl);
+                }
             }
-
-            if (isOrganizer(task) || User.IsInRole("Admin"))
-            {
-                // luam pagina de unde am venit ca sa stim unde sa ne intoarcem
-                var spl = Request.Headers["Referer"].ToString().Substring(10);
-                spl = spl.Substring(spl.IndexOf("/"));
-                returnUrl = spl;
-                return View(task);
-            }
-
             else
             {
-                TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui task daca nu sunteti organizator pe proiect";
-                return RedirectToAction("Index");
-
+                TempData["message"] = "Nu extista taskul pe care doriti sa il editati!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect(returnUrl);
             }
-
         }
 
         // Se adauga articolul modificat in baza de date
@@ -341,14 +340,15 @@ namespace TaskManagementApp.Controllers
 
                     task.TaskTitle = requestTask.TaskTitle;
                     task.TaskContent = sanitizer.Sanitize(requestTask.TaskContent);
-                    task.StatId = requestTask.StatId;
-                    TempData["message"] = "Taskul a fost modificat";
+                    TempData["message"] = "Taskul a fost modificat!";
+                    TempData["messageType"] = "alert-succes";
                     db.SaveChanges();
                     return Redirect(returnUrl);
                 }
                 else
                 {
                     TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui task daca nu sunteti organizator pe proiect";
+                    TempData["messageType"] = "alert-danger";
                     return Redirect(returnUrl);
                 }
             }
@@ -363,44 +363,26 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult AssignTask(int id)
         {
-            // luam pagina de unde am venit ca sa stim unde sa ne intoarcem
-            var spl = Request.Headers["Referer"].ToString().Substring(10);
-            spl = spl.Substring(spl.IndexOf("/"));
-            returnUrl = spl;
-
             Task task = db.Tasks.Include("Stat")
                                         .Where(t => t.TaskId == id)
                                         .First();
             if (task == null)
             {
                 TempData["message"] = "Nu exista taskul dorit!";
-                return Redirect(returnUrl);
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Index/" + id);
             }
-            if (Regex.Match(returnUrl, @"/TeamMembers/Show/*").Success)
+            if (isOrganizer(task) || User.IsInRole("Admin"))
             {
-                string routeEnd = returnUrl.Substring(18);
-                string number = "";
-                if (routeEnd.Contains('?'))
-                {
-                    number = routeEnd.Substring(0, routeEnd.IndexOf('/'));
-                }
-                else
-                {
-                    number = routeEnd;
-                }
-                if (isOrganizer(task) || User.IsInRole("Admin"))
-                {
-                    task.TeamMembersList = GetAvailableTeamMembers(task);
-                    return View(task);
-                }
-                else
-                {
-                    TempData["message"] = "Nu aveti dreptul sa asignati taskuri intr-o echipa care nu va apartine!";
-                    return Redirect(returnUrl);
-                }
+                task.TeamMembersList = GetAvailableTeamMembers(task);
+                return View(task);
             }
-            TempData["message"] = "Nu puteti asigna taskuri daca nu va aflati in pagina unei echipe!";
-            return Redirect(returnUrl);
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa asignati taskurile dintr-o echipa sau proiect care nu va apartine!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Show/" + id);
+            }
         }
 
         // Se adauga articolul modificat in baza de date
@@ -408,7 +390,7 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult AssignTask(int id, Task requestTask)
         {
-            Task task = db.Tasks.Include("Stat").Where(t => t.TaskId == id).First();
+            Task task = db.Tasks.Include("Stat").Include("TeamMember").Include("TeamMember.User").Where(t => t.TaskId == id).First();
 
             if (isOrganizer(task) || User.IsInRole("Admin"))
             {
@@ -420,12 +402,19 @@ namespace TaskManagementApp.Controllers
                         task.StatId = stat.StatId;
                     }
                     task.TeamMemberId = requestTask.TeamMemberId;
+                    if (requestTask.StartDate != null)
+                        task.StartDate = requestTask.StartDate;
+                    if (requestTask.DueDate != null)
+                        task.DueDate = requestTask.DueDate;
                     TempData["message"] = "Taskul a fost asignat!";
+                    TempData["messageType"] = "alert-succes";
                     db.SaveChanges();
-                    return Redirect(returnUrl);
+                    return Redirect("/Tasks/Show/" + id);
                 }
                 else
                 {
+                    TempData["message"] = "Selectati un membru!";
+                    TempData["messageType"] = "alert-danger";
                     requestTask.TeamMembersList = GetAvailableTeamMembers(requestTask);
                     return View(requestTask);
                 }
@@ -433,7 +422,58 @@ namespace TaskManagementApp.Controllers
             else
             {
                 TempData["message"] = "Nu aveti dreptul sa asignati un task daca nu sunteti organizator pe proiectul caruia acesta ii apartine!";
-                return Redirect(returnUrl);
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Show/" + id);
+            }
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult ChangeDate(int id)
+        {
+            Task task = db.Tasks.Include("Stat")
+                                        .Where(t => t.TaskId == id)
+                                        .First();
+            if (task == null)
+            {
+                TempData["message"] = "Nu exista taskul dorit!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Index/" + id);
+            }
+            if (isOrganizer(task) || User.IsInRole("Admin"))
+            {
+                return View(task);
+            }
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa modificati data de start sau de final pentru taskurile dintr-o echipa sau proiect care nu va apartine!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Show/" + id);
+            }
+        }
+
+        // Se adauga articolul modificat in baza de date
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult ChangeDate(int id, Task requestTask)
+        {
+            Task task = db.Tasks.Include("Stat").Include("TeamMember").Include("TeamMember.User").Where(t => t.TaskId == id).First();
+
+            if (isOrganizer(task) || User.IsInRole("Admin"))
+            {
+                if (requestTask.StartDate != null)
+                    task.StartDate = requestTask.StartDate;
+                if (requestTask.DueDate != null)
+                    task.DueDate = requestTask.DueDate;
+                TempData["message"] = "Taskul a fost asignat!";
+                TempData["messageType"] = "alert-succes";
+                db.SaveChanges();
+                return Redirect("/Tasks/Show/" + id);
+            }
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa asignati un task daca nu sunteti organizator pe proiectul caruia acesta ii apartine!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Show/" + id);
             }
         }
 
@@ -445,40 +485,27 @@ namespace TaskManagementApp.Controllers
             Task task = db.Tasks.Include("Comments")
                                          .Where(t => t.TaskId == id)
                                          .First();
+            var comm = db.Comments.Where(c => c.TaskId == task.TaskId);
 
             if (isOrganizer(task) || User.IsInRole("Admin"))
             {
+                foreach(Comment c in comm)
+                {
+                    db.Comments.Remove(c);
+                    db.SaveChanges();
+                }
                 db.Tasks.Remove(task);
                 db.SaveChanges();
-                TempData["message"] = "Taskul a fost sters";
+                TempData["message"] = "Taskul a fost sters!";
+
                 return RedirectToAction("Index");
             }
 
             else
             {
-                TempData["message"] = "Nu aveti dreptul sa stergeti un task daca nu sunteti organizatorul proiectului";
+                TempData["message"] = "Nu aveti dreptul sa stergeti un task daca nu sunteti organizatorul proiectului!";
                 return RedirectToAction("Index");
             }
-        }
-
-        public ActionResult PopulateTeamMembers(string PId)
-        {
-            var members = new List<SelectListItem>();
-            var team = db.Teams.Where(t => t.ProjectId.ToString() == PId).First();
-            if(team != null)
-            {
-                return Json(members);
-            }
-            var tMembs = db.TeamMembers.Include("User").Where(tm => tm.TeamId == team.TeamId);
-            foreach (var teamMember in tMembs)
-            {
-                members.Add(new SelectListItem
-                {
-                    Value = teamMember.TeamMemberId.ToString(),
-                    Text = teamMember.User.UserName.ToString()
-                });
-            }
-            return Json(members);
         }
 
         [NonAction]
@@ -567,40 +594,6 @@ namespace TaskManagementApp.Controllers
         }
 
         [NonAction]
-        public bool HasProjects(string UId)
-        {
-            var projects = from proj in db.Projects
-                           where proj.UserId == UId
-                           select proj;
-
-            if (projects.Count() > 0)
-                return true;
-            else
-                return false;
-        }
-
-        [NonAction]
-        public IEnumerable<SelectListItem> GetUserProjects(string UId)
-        {
-            var selectList = new List<SelectListItem>();
-
-            var projects = from proj in db.Projects
-                           where proj.UserId == UId
-                           select proj;
-
-            foreach (var project in projects)
-            {
-                selectList.Add(new SelectListItem
-                {
-                    Value = project.ProjectId.ToString(),
-                    Text = project.ProjectTitle.ToString()
-                });
-            }
-
-            return selectList;
-        }
-
-        [NonAction]
         public IEnumerable<SelectListItem> GetAllProjects()
         {
             var selectList = new List<SelectListItem>();
@@ -614,52 +607,6 @@ namespace TaskManagementApp.Controllers
                 {
                     Value = project.ProjectId.ToString(),
                     Text = project.ProjectTitle.ToString()
-                });
-            }
-
-            return selectList;
-        }
-
-        [NonAction]
-        public IEnumerable<SelectListItem> GetAllTeamMembers()
-        {
-            var selectList = new List<SelectListItem>();
-
-            var teamMembers = from teamMember in db.TeamMembers
-                                .Include("User")
-                              select teamMember;
-
-            foreach (var teamMember in teamMembers)
-            {
-                selectList.Add(new SelectListItem
-                {
-                    Value = teamMember.TeamMemberId.ToString(),
-                    Text = teamMember.User.UserName.ToString()
-                });
-            }
-
-            return selectList;
-        }
-
-        [NonAction]
-        public IEnumerable<SelectListItem> GetAllTeamMembers(int ProjectId)
-        {
-
-            Team team = db.Teams.Where(t => t.ProjectId == ProjectId).First();
-
-            var selectList = new List<SelectListItem>();
-
-            var teamMembers = from teamMember in db.TeamMembers
-                                .Include("User")
-                                .Where(tm => tm.TeamId == team.TeamId)
-                              select teamMember;
-
-            foreach (var teamMember in teamMembers)
-            {
-                selectList.Add(new SelectListItem
-                {
-                    Value = teamMember.TeamMemberId.ToString(),
-                    Text = teamMember.User.UserName.ToString()
                 });
             }
 

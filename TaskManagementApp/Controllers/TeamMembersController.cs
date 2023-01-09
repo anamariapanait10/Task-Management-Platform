@@ -10,6 +10,7 @@ using System.Net.WebSockets;
 using System.Security.Cryptography;
 using TaskManagementApp.Data;
 using TaskManagementApp.Models;
+using Task = TaskManagementApp.Models.Task;
 
 namespace TaskManagementApp.Controllers
 {
@@ -95,7 +96,15 @@ namespace TaskManagementApp.Controllers
                                  .First();
             if (proj.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
-
+                var tasks = db.Tasks.Include("TeamMember").Include("TeamMember.User").Where(t => t.TeamMember.UserId == proj.UserId);
+                if (tasks.Count() > 0)
+                {
+                    foreach (Task t in tasks)
+                    {
+                        t.TeamMemberId = null;
+                        db.SaveChanges();
+                    }
+                }
                 db.TeamMembers.Remove(member);
                 db.SaveChanges();
                 TempData["message"] = "Membrul a fost sters";

@@ -12,12 +12,8 @@
         <h2 class="text-center mt-3">Editare comentariu</h2>
         <br />
         @using (Html.BeginForm(controllerName: "Comments", actionName: "Edit",
-<<<<<<< HEAD
-        method: FormMethod.Post, routeValues: new { id = Model.CommentId }))
-=======
-            method: FormMethod.Post, routeValues: new { id = Model.CommentId }))
->>>>>>> 05523b9e472fdc3696c692ace11cf41b975b3c6f
 
+        method: FormMethod.Post, routeValues: new { id = Model.CommentId }))
         {
             @Html.HiddenFor(t => t.TaskId, new {@Value=@Model.TaskId})
             @Html.Label("Content", "Continut comentariu", new {@style="font-weight: bold"})

@@ -22,12 +22,26 @@
         <h2 class="text-center">Taskuri</h2>
         @if (ViewBag.ProjectsTasks != null)
         {
-            @foreach (TaskManagementApp.Models.Task task in ViewBag.ProjectsTasks)
-            {
-                <div class="card-body">
-                    @Html.Partial("TaskInfo", task)
-                </div>
-            }
+            <div class="card p-3">
+                @foreach (TaskManagementApp.Models.Task task in ViewBag.ProjectsTasks)
+                {
+                    <div class="card">
+                        @Html.Partial("TaskInfo", task)
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a class="btn btn-outline-success mx-2" href="/Tasks/Show/@task.TaskId"><i class="bi bi-info-circle"></i> Info</a>
+                            </div>
+
+                            <div>
+                                <form method="post" action="/Tasks/Delete/@task.TaskId">
+                                    <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Sterge taskul</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                }
+            </div>
         }
     </div>
 

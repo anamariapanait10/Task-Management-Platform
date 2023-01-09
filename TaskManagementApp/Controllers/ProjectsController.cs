@@ -122,7 +122,7 @@ namespace TaskManagementApp.Controllers
             Project project = db.Projects.Include("User")
                                          .Where(p => p.ProjectId == id)
                                          .First();
-            var tasks = db.Tasks.Include("Project").Include("Stat").Include("TeamMember")
+            var tasks = db.Tasks.Include("Project").Include("Stat").Include("TeamMember").Include("TeamMember.User")
                                                     .Where(t => t.ProjectId == id)
                                                     .ToList();
 
@@ -379,6 +379,15 @@ namespace TaskManagementApp.Controllers
             {
                 if (User.IsInRole("Admin"))
                 {
+                    var tasks = db.Tasks.Include("TeamMember").Include("TeamMember.User").Where(t => t.TeamMember.UserId == proj.UserId);
+                    if(tasks.Count() > 0)
+                    {
+                        foreach(Task t in tasks)
+                        {
+                            t.TeamMemberId = null;
+                            db.SaveChanges();
+                        }
+                    }
                     proj.UserId = requestProject.UserId;
                     db.TeamMembers.Remove(member);
                     TempData["message"] = "Organizatorul de proiect a fost modificat, iar cel vechi sters";
@@ -437,17 +446,56 @@ namespace TaskManagementApp.Controllers
             Project project = db.Projects.Include("User")
                                         .Where(p => p.ProjectId == id)
                                         .First();
-
             if (isOrganizer(project) || User.IsInRole("Admin"))
             {
+
+                var tasks = db.Tasks.Where(t => t.ProjectId == project.ProjectId);
+                if(tasks.Count() > 0)
+                {
+                    foreach(Task t in tasks)
+                    {
+                        var comments = db.Comments.Where(c => c.TaskId == t.TaskId);
+                        if (comments.Count() > 0)
+                        {
+                            foreach (Comment c in comments)
+                            {
+                                db.Comments.Remove(c);
+                                db.SaveChanges();
+                            }
+                        }
+                    }
+                }
+                var team = db.Teams.Where(t => t.ProjectId == project.ProjectId);
+
+                if (team.Count() == 1)
+                {
+                    foreach (Team t in team)
+                    {
+                        var members = db.TeamMembers.Where(tm => tm.TeamId == t.TeamId);
+
+                        if (members.Count() > 0)
+                        {
+                            foreach (TeamMember m in members)
+                            {
+                                db.TeamMembers.Remove(m);
+                                db.SaveChanges();
+                            }
+
+                        }
+                        db.Teams.Remove(t);
+                        db.SaveChanges();
+                    }                    
+                }
                 db.Projects.Remove(project);
                 db.SaveChanges();
-                TempData["message"] = "Proiectul a fost sters";
+                TempData["message"] = "Proiectul a fost sters!";
+                TempData["messageType"] = "alert-succes";
                 return RedirectToAction("Index");
             }
             else
             {
-                TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui proiect care nu va apartine";
+                TempData["message"] = "Nu aveti dreptul sastergeti acest proiect!";
+                TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Index");
             }
         }
