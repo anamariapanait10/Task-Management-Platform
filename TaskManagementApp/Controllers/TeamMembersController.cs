@@ -96,12 +96,15 @@ namespace TaskManagementApp.Controllers
                                  .First();
             if (proj.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
-                var tasks = db.Tasks.Include("TeamMember").Include("TeamMember.User").Where(t => t.TeamMember.UserId == proj.UserId);
+                var tasks = db.Tasks.Include("TeamMember").Include("TeamMember.User").Where(t => t.TeamMemberId  == member.TeamMemberId);
                 if (tasks.Count() > 0)
                 {
                     foreach (Task t in tasks)
                     {
                         t.TeamMemberId = null;
+                        Stat stat = db.Stats.Where(s => s.StatName == "Not Assigned").First();
+                        if(t.Stat.StatName != "Completed")
+                            t.StatId = stat.StatId;
                         db.SaveChanges();
                     }
                 }

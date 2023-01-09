@@ -354,8 +354,6 @@ namespace TaskManagementApp.Controllers
             }
             else
             {
-                requestTask.ProjectsList = GetAllProjects();
-                requestTask.StatsList = GetAllStats();
                 return View(requestTask);
             }
         }
@@ -394,29 +392,47 @@ namespace TaskManagementApp.Controllers
 
             if (isOrganizer(task) || User.IsInRole("Admin"))
             {
-                if (ModelState.IsValid && requestTask.TeamMemberId != null)
+                if (ModelState.IsValid)
                 {
-                    if (task.Stat.StatName == "Not Assigned")
+                    if (requestTask.TeamMemberId != null && task.TeamMemberId == null)
                     {
-                        Stat stat = db.Stats.Where(s => s.StatName == "Not Started").First();
-                        task.StatId = stat.StatId;
+                        if (task.Stat.StatName == "Not Assigned")
+                        {
+                            Stat stat = db.Stats.Where(s => s.StatName == "Not Started").First();
+                            task.StatId = stat.StatId;
+                        }
+                        task.TeamMemberId = requestTask.TeamMemberId;
+                        if (requestTask.StartDate != null)
+                            task.StartDate = requestTask.StartDate;
+                        if (requestTask.DueDate != null)
+                            task.DueDate = requestTask.DueDate;
+                        TempData["message"] = "Taskul a fost asignat!";
+                        TempData["messageType"] = "alert-succes";
+                        db.SaveChanges();
+                        return Redirect("/Tasks/Show/" + id);
                     }
-                    task.TeamMemberId = requestTask.TeamMemberId;
-                    if (requestTask.StartDate != null)
-                        task.StartDate = requestTask.StartDate;
-                    if (requestTask.DueDate != null)
-                        task.DueDate = requestTask.DueDate;
-                    TempData["message"] = "Taskul a fost asignat!";
-                    TempData["messageType"] = "alert-succes";
-                    db.SaveChanges();
-                    return Redirect("/Tasks/Show/" + id);
+                    else
+                    {
+                        if (requestTask.TeamMemberId == null && task.TeamMemberId != null)
+                        {
+                            Stat stat = db.Stats.Where(s => s.StatName == "Not Assigned").First();
+                            task.StatId = stat.StatId;
+                            task.TeamMemberId = null;
+                            db.SaveChanges();
+                            return Redirect("/Tasks/Show/" + id);
+                        }
+                        
+                        TempData["message"] = "Selectati un membru!";
+                        TempData["messageType"] = "alert-danger";
+                        requestTask.TeamMembersList = GetAvailableTeamMembers(requestTask);
+                        return View(requestTask);
+                    }
                 }
-                else
+                else 
                 {
-                    TempData["message"] = "Selectati un membru!";
+                    TempData["message"] = "Model State not Vallid!";
                     TempData["messageType"] = "alert-danger";
-                    requestTask.TeamMembersList = GetAvailableTeamMembers(requestTask);
-                    return View(requestTask);
+                    return Redirect("/Tasks/Show/" + id);
                 }
             }
             else
@@ -477,6 +493,66 @@ namespace TaskManagementApp.Controllers
             }
         }
 
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult ChangeState(int id)
+        {
+            Task task = db.Tasks.Include("Stat")
+                                        .Where(t => t.TaskId == id)
+                                        .First();
+            if (task == null)
+            {
+                TempData["message"] = "Nu exista taskul dorit!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Index/" + id);
+            }
+            SetAccessRights(task);
+            if (isOrganizer(task) || User.IsInRole("Admin") || task.TeamMember.UserId == _userManager.GetUserId(User))
+            {
+                task.StatsList = GetAllStats(task);
+                return View(task);
+            }
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa modificati statusul acestu task!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Show/" + id);
+            }
+        }
+
+        // Se adauga articolul modificat in baza de date
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult ChangeState(int id, Task requestTask)
+        {
+            Task task = db.Tasks.Include("Stat").Include("TeamMember").Include("TeamMember.User").Where(t => t.TaskId == id).First();
+
+            if (isOrganizer(task) || User.IsInRole("Admin") || task.TeamMember.UserId == _userManager.GetUserId(User))
+            {
+                if (ModelState.IsValid && requestTask.StatId != null)
+                {
+                    task.StatId = requestTask.StatId;
+                    db.SaveChanges();
+                    TempData["message"] = "Statusul taskului a fost modificat!";
+                    TempData["messageType"] = "alert-succes";
+                    return Redirect("/Tasks/Show/" + id);
+                }
+                else
+                {
+                    requestTask.StatsList = GetAllStats(task);
+                    SetAccessRights(task);
+                    TempData["message"] = "Selectati un status!";
+                    TempData["messageType"] = "alert-danger";
+                    return View(requestTask);
+                }
+            }
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa modificati statusul acest  task!";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Tasks/Show/" + id);
+            }
+        }
+
         // Se sterge un task din baza de date 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
@@ -509,14 +585,14 @@ namespace TaskManagementApp.Controllers
         }
 
         [NonAction]
-        public IEnumerable<SelectListItem> GetAllStats()
+        public IEnumerable<SelectListItem> GetAllStats(Task task)
         {
             // generam o lista de tipul SelectListItem fara elemente
             var selectList = new List<SelectListItem>();
 
             // extragem toate statusurile din baza de date
             var stats = from stat in db.Stats
-                        where stat.StatName != "Not Assigned"
+                        where stat.StatName != "Not Assigned" && stat.StatId != task.StatId
                         select stat;
 
             // iteram prin statusuri
@@ -562,38 +638,6 @@ namespace TaskManagementApp.Controllers
         }
 
         [NonAction]
-        public IEnumerable<SelectListItem> GetAvailableStats(Task task)
-        {
-            // generam o lista de tipul SelectListItem fara elemente
-            var selectList = new List<SelectListItem>();
-
-            // extragem toate statusurile din baza de date
-            var stats = from stat in db.Stats
-                        where stat.StatId != task.StatId
-                        select stat;
-
-            // iteram prin statusuri
-            foreach (var stat in stats)
-            {
-                // adaugam in lista elementele necesare pentru dropdown
-                // id-ul statusului si denumirea acestuia
-                if (task.TeamMemberId != null)
-                {
-                    if (stat.StatName != "Not Assigned")
-                    {
-                        selectList.Add(new SelectListItem
-                        {
-                            Value = stat.StatId.ToString(),
-                            Text = stat.StatName.ToString()
-                        });
-                    }
-                }
-            }
-            // returnam lista de statusuri
-            return selectList;
-        }
-
-        [NonAction]
         public IEnumerable<SelectListItem> GetAllProjects()
         {
             var selectList = new List<SelectListItem>();
@@ -621,17 +665,27 @@ namespace TaskManagementApp.Controllers
             ViewBag.EsteOrganizator = false;
             ViewBag.EsteAdmin = false;
             ViewBag.ButonAfisareTask = false;
+            ViewBag.UserAsign = false;
 
             if (isOrganizer(task))
             {
                 ViewBag.AfisareButoane = true;
                 ViewBag.EsteOrganizator = true;
+                return;
             }
 
             if (User.IsInRole("Admin"))
             {
                 ViewBag.AfisareButoane = true;
                 ViewBag.EsteAdmin = true;
+                return;
+            }
+
+            if(task.TeamMember.UserId == _userManager.GetUserId(User))
+            {
+                ViewBag.AfisareButoane = true;
+                ViewBag.UserAsign = true;
+                return;
             }
         }
 

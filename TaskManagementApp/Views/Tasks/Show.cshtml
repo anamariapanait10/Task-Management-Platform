@@ -29,10 +29,6 @@
                     </div>
 
                     <div>
-                        <a class="btn btn-outline-success mx-2" href="/Tasks/Show/@Model.TaskId" style="float:right"><i class="bi bi-eye"></i> Comentarii</a>
-                    </div>
-
-                    <div>
                         <form method="post" action="/Tasks/Delete/@Model.TaskId">
                             <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Sterge taskul</button>
                         </form>
@@ -68,7 +64,7 @@
                     </div>
                 </div>
             }
-            else
+            else if (ViewBag.AfisareButoane && ViewBag.UserAsign)
             {
                 <div class="d-flex justify-content-between">
                     <div>
@@ -105,7 +101,7 @@
                     </div>
                 </div>
             }
-            else
+            else if (ViewBag.AfisareButoane && ViewBag.UserAsign)
             {
                 <div class="d-flex justify-content-between">
                     <div>
