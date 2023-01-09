@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TaskManagementApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CreareBazaDate : Migration
+    public partial class MigratieNoua : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

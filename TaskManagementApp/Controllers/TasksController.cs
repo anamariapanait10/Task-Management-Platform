@@ -419,10 +419,26 @@ namespace TaskManagementApp.Controllers
                             Stat stat = db.Stats.Where(s => s.StatName == "Not Assigned").First();
                             task.StatId = stat.StatId;
                             task.TeamMemberId = null;
+                            if (requestTask.StartDate != null)
+                                task.StartDate = requestTask.StartDate;
+                            if (requestTask.DueDate != null)
+                                task.DueDate = requestTask.DueDate;
                             db.SaveChanges();
                             return Redirect("/Tasks/Show/" + id);
                         }
-                        
+                        else if (requestTask.TeamMemberId != null && task.TeamMemberId != null)
+                        {
+                            task.TeamMemberId = requestTask.TeamMemberId;
+                            if (requestTask.StartDate != null)
+                                task.StartDate = requestTask.StartDate;
+                            if (requestTask.DueDate != null)
+                                task.DueDate = requestTask.DueDate;
+                            TempData["message"] = "Taskul a fost asignat!";
+                            TempData["messageType"] = "alert-succes";
+                            db.SaveChanges();
+                            return Redirect("/Tasks/Show/" + id);
+                        }
+
                         TempData["message"] = "Selectati un membru!";
                         TempData["messageType"] = "alert-danger";
                         requestTask.TeamMembersList = GetAvailableTeamMembers(requestTask);
@@ -431,7 +447,7 @@ namespace TaskManagementApp.Controllers
                 }
                 else 
                 {
-                    TempData["message"] = "Model State not Vallid!";
+                    TempData["message"] = "Model State not Valid!";
                     TempData["messageType"] = "alert-danger";
                     return Redirect("/Tasks/Show/" + id);
                 }
@@ -625,20 +641,39 @@ namespace TaskManagementApp.Controllers
                 return selectList;
             }
 
-            var teamMembers = from teamMember in db.TeamMembers
-                                 .Include("User")
-                              where teamMember.TeamMemberId != task.TeamMemberId
-                                    && teamMember.TeamId == team.TeamId
-                              select teamMember;
-
-            foreach (var member in teamMembers)
+            if (task.TeamMemberId != null)
             {
-                selectList.Add(new SelectListItem
+                var teamMembers = from teamMember in db.TeamMembers
+                                     .Include("User")
+                                  where teamMember.TeamMemberId != task.TeamMemberId
+                                        && teamMember.TeamId == team.TeamId
+                                  select teamMember;
+                foreach (var member in teamMembers)
                 {
-                    Value = member.TeamMemberId.ToString(),
-                    Text = member.User.UserName.ToString()
-                });
+                    selectList.Add(new SelectListItem
+                    {
+                        Value = member.TeamMemberId.ToString(),
+                        Text = member.User.UserName.ToString()
+                    });
+                }
             }
+            else
+            {
+                var teamMembers = from teamMember in db.TeamMembers
+                                     .Include("User")
+                                  where teamMember.TeamMemberId != task.TeamMemberId
+                                        && teamMember.TeamId == team.TeamId
+                                  select teamMember;
+                foreach (var member in teamMembers)
+                {
+                    selectList.Add(new SelectListItem
+                    {
+                        Value = member.TeamMemberId.ToString(),
+                        Text = member.User.UserName.ToString()
+                    });
+                }
+            }
+            
             return selectList;
         }
 

@@ -12,8 +12,8 @@ using TaskManagementApp.Data;
 namespace TaskManagementApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221218200132_CreareBazaDate")]
-    partial class CreareBazaDate
+    [Migration("20230109223337_MigratieNoua")]
+    partial class MigratieNoua
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

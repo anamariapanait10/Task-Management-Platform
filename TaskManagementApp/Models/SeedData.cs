@@ -11,6 +11,7 @@ using System.IO;
 using System.IO.Pipelines;
 using TaskManagementApp.Data;
 using TaskManagementApp.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace TaskManagementApp.Models
 {
@@ -246,25 +247,305 @@ namespace TaskManagementApp.Models
                     {
                         TeamName = "ASP Task Management",
                         TeamDate = new DateTime(2022, 12, 12, 13, 13, 13),
-                        ProjectId = 1,
+                        ProjectId = 1
                     },
                     new Team
                     {
                         TeamName = "SO #Nr.1",
                         TeamDate = new DateTime(2022, 10, 23, 22, 30, 15),
-                        ProjectId = 2,
+                        ProjectId = 2
                     },
                     new Team
                     {
                         TeamName = "TopTeam SO",
                         TeamDate = new DateTime(2022, 10, 22, 17, 32, 45),
-                        ProjectId = 3,
+                        ProjectId = 3
                     },
                     new Team
                     {
                         TeamName = "Laborator ASP",
                         TeamDate = new DateTime(2022, 12, 24, 8, 00, 00),
-                        ProjectId = 5,
+                        ProjectId = 5
+                    }
+                    );
+                    context.SaveChanges();
+                }
+
+                if (!context.TeamMembers.Any())
+                {
+                    context.TeamMembers.AddRange(
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb1",
+                        TeamId = 1
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb2",
+                        TeamId = 1
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb7",
+                        TeamId = 1
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb7",
+                        TeamId = 2
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb3",
+                        TeamId = 2
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb0",
+                        TeamId = 2
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb4",
+                        TeamId = 3
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb0",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb1",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb2",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb3",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb4",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb5",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb6",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb7",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb8",
+                        TeamId = 4
+                    },
+                    new TeamMember
+                    {
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb5",
+                        TeamId = 3
+                    }
+                    );
+                    context.SaveChanges();
+                }
+                if (!context.Tasks.Any())
+                {
+                    context.Tasks.AddRange(
+                    new Task
+                    {
+                        TaskTitle = "Implementat functii utile",
+                        TaskContent = "Vrem sa implementam functii pentru citre si scriere din fisier. De asemenea trebuie functii pentru convesia din string in int si invers.",
+                        StatId = 2, // ar trebui sa fie Not Started
+                        StartDate = new DateTime(2022, 12, 24, 8, 00, 00),
+                        DueDate = new DateTime(2023, 3, 1, 12, 00, 00),
+                        ProjectId = 3,
+                        TeamMemberId = 7
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Adaugat daemon-ul",
+                        TaskContent = "Vrem sa adaugam fisierul cu codul pe care il va executa daemon-ul. Trebuie avut in vedere sablonul pentru un program daemon cat si cerintele date.",
+                        StatId = 1, // ar trebui sa fie Not Assigned
+                        StartDate = new DateTime(2022, 11, 08, 6, 00, 00),
+                        DueDate = new DateTime(2023, 6, 1, 7, 00, 00),
+                        ProjectId = 3
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Adaugat script PATH",
+                        TaskContent = "De scris un script care adauga programul da.c la calea de fisiere PATH. Astfel vom avea un proiect care poate fi rulat din orice director si nu neaparat din cel in care se afla programul.",
+                        StatId = 3, // ar trebui sa fie In Progress
+                        StartDate = new DateTime(2022, 11, 08, 6, 00, 00),
+                        DueDate = new DateTime(2023, 6, 1, 7, 00, 00),
+                        ProjectId = 3,
+                        TeamMemberId = 17
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Adaugat functia analiza",
+                        TaskContent = "De scris functia care calculeaza dimensiunile de fisiere si foldere. Aceasta functie va scrie rezultatele intr-un fisiersi sub forma de procente.",
+                        StatId = 4, // ar trebui sa fie Completed
+                        StartDate = new DateTime(2022, 10, 07, 6, 00, 00),
+                        DueDate = new DateTime(2022, 12, 14, 5, 00, 00),
+                        ProjectId = 3,
+                        TeamMemberId = 3
+                    },
+                    new Task
+                    {
+                        TaskTitle = "De adaugat documentatie",
+                        TaskContent = "De scris pe scurt o descriere a proiectului impreuna cu etapele parcurse. La fiecare etapa se va scrie si persoana care s-a ocupat cu bucata aceea de cod. De preferat documentatia sa fie adaugata in README.md.",
+                        StatId = 1, // ar trebui sa fie Not Assigned
+                        StartDate = new DateTime(2022, 11, 08, 6, 00, 00),
+                        DueDate = new DateTime(2023, 6, 1, 7, 00, 00),
+                        ProjectId = 3,
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Diagrama ER",
+                        TaskContent = "De adaugat diagrama entitate relatie pentru realizarea proiectului",
+                        StatId = 4, //completed
+                        StartDate = new DateTime(2022, 12, 12, 20, 2, 33),
+                        DueDate = new DateTime(2023, 1, 1, 1, 1, 1),
+                        ProjectId = 1,
+                        TeamMemberId = 1
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Team MVC",
+                        TaskContent = "De adaugat Model, View si Controller pentru Team, care replica functionalitatile unei echipe (adaugare membru, selectare proiect etc)",
+                        StatId = 3, //progress
+                        StartDate = new DateTime(2022, 12, 13, 13, 13, 13),
+                        DueDate = new DateTime(2023, 10, 1, 1, 1, 1),
+                        ProjectId = 1,
+                        TeamMemberId = 2
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Task MVC",
+                        TaskContent = "De adaugat Model, View si Controller pentru Task, care replica functionalitatile unei task (asignare, reasignare, modificare data start/data final, modificare status etc)",
+                        StatId = 3, //progress
+                        StartDate = new DateTime(2022, 12, 13, 13, 13, 13),
+                        DueDate = new DateTime(2023, 10, 1, 1, 1, 1),
+                        ProjectId = 1,
+                        TeamMemberId = 3
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Design",
+                        TaskContent = "De adaugat design in aplicatie",
+                        StatId = 2, //not started
+                        DueDate = new DateTime(2023, 10, 1, 1, 1, 1),
+                        ProjectId = 1,
+                        TeamMemberId = 3
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Imagini User",
+                        TaskContent = "Modificat proiectul astfel incat userii sa aiba poze de profil",
+                        StatId = 1, //not assigned
+                        ProjectId = 1
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Adaugat triggere",
+                        TaskContent = "De adaugat triggere la inserarea pe toate tabelele.",
+                        StatId = 1, // ar trebui sa fie Not Assigned
+                        StartDate = new DateTime(2022, 08, 13, 9, 00, 00),
+                        DueDate = new DateTime(2023, 06, 12, 7, 30, 00),
+                        ProjectId = 4
+                    },
+                    new Task
+                    {
+                        TaskTitle = "Adaugat un pachet",
+                        TaskContent = "Vrem sa adaugam un pachet care inglobeaza toate functiile si subprogramele din aplicatie.",
+                        StatId = 1, // ar trebui sa fie Not Assigned
+                        StartDate = new DateTime(2022, 9, 08, 6, 00, 00),
+                        DueDate = new DateTime(2023, 7, 1, 7, 00, 00),
+                        ProjectId = 4
+                    }
+                    );
+                    context.SaveChanges();
+                }
+
+                if (!context.Comments.Any())
+                {
+                    context.Comments.AddRange(
+                        new Comment
+                        {
+                            CommentContent = "Cam cand estimezi ca te vei apuca de acest task pentru ca as avea si eu nevoie de aceste functii.",
+                            CommentDate = new DateTime(2023, 1, 9, 8, 00, 00),
+                            TaskId = 1, // ar trebui sa fie Not Started
+                            UserId = "8e445865-a24d-4543-a6c6-9443d048cdb5",
+                        },
+                    new Comment
+                    {
+                        CommentContent = "As putea sa iau eu taskul acesta?",
+                        CommentDate = new DateTime(2023, 1, 9, 8, 00, 00),
+                        TaskId = 2, // ar trebui sa fie Not Assigned
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb5",
+                    },
+                    new Comment
+                    {
+                        CommentContent = "Arata bine pana acum",
+                        CommentDate = new DateTime(2023, 1, 9, 8, 00, 00),
+                        TaskId = 3, // ar trebui sa fie Not Assigned
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb4",
+                    },
+                    new Comment
+                    {
+                        CommentContent = "Ai putea sa faci te rog fisier separat pentru constante?",
+                        CommentDate = new DateTime(2023, 1, 9, 8, 00, 00),
+                        TaskId = 4, // ar trebui sa fie Not Assigned
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb4",
+                    },
+                    new Comment
+                    {
+                        CommentContent = "Sigur, am adaugat acum",
+                        CommentDate = new DateTime(2023, 1, 9, 8, 00, 00),
+                        TaskId = 4, // ar trebui sa fie Not Assigned
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb5",
+                    },
+                    new Comment
+                    {
+                        CommentContent = "Am adaugat model si controller pentru Team, dar view-urile nu sunt inca facute",
+                        CommentDate = new DateTime(2022, 12, 19, 14, 12, 11),
+                        TaskId = 7,
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb2"
+                    },
+                    new Comment
+                    {
+                        CommentContent = "Cand poti pune si View-urile ca sa pot rula aplicatia",
+                        CommentDate = new DateTime(2022, 12, 21, 14, 12, 11),
+                        TaskId = 7,
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb1"
+                    },
+                    new Comment
+                    {
+                        CommentContent = "Nu cred ca mai am timp sa ma ocup si de design",
+                        CommentDate = new DateTime(2023, 1, 9, 23, 12, 11),
+                        TaskId = 9,
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb7"
+                    },
+                    new Comment
+                    {
+                        CommentContent = "Too Late - predam proiectul",
+                        CommentDate = new DateTime(2023, 12, 10, 16, 00, 00),
+                        TaskId = 10,
+                        UserId = "8e445865-a24d-4543-a6c6-9443d048cdb1"
                     }
                     );
                     context.SaveChanges();

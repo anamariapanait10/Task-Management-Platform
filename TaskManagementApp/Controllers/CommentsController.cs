@@ -29,7 +29,7 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            var comments = from comm in db.Comments.Include("Task").Include("User")
+            var comments = from comm in db.Comments.Include("Task").Include("Task.Project").Include("User")
                            orderby comm.CommentDate
                            select comm;
 
