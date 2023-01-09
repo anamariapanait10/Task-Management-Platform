@@ -11,8 +11,10 @@
         <span class="col-2 text-end"><i class="bi bi-person"></i>@Model.User.UserName</span>
 
     </div>
-
+    <br />
     <div><b>Commented: </b> @Html.Raw(@Model.CommentContent)</div>
+    <br />
+    <br />
 
     @if (ViewBag.EsteOrganizator || ViewBag.EsteAdmin)
     {
