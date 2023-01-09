@@ -49,17 +49,24 @@
                 @Html.HiddenFor(m => m.ProjectId, new {@Value=@Model.ProjectId })
                 <br />
 
-                <label for="StartDate">Start Date:</label>
-                <input type="date" id="StartDate" name="StartDate" style="margin-left:10px" onfocus="SetMinSD()" onchange="myChangeFunction(this)">
+                <div class="d-flex justify-content-center">
+                    <label for="StartDate">Start Date:</label>
+                    <input type="date" id="StartDate" name="StartDate" style="margin-left:10px" onfocus="SetMinSD()" onchange="myChangeFunction(this)">
+                </div>
                 <br />
                 <br />
 
-                <label for="DueDate">Due Date:</label>
-                <input type="date" id="DueDate" name="DueDate" style="margin-left:10px">
+                <div class="d-flex justify-content-center">
+                    <label for="DueDate">Due Date:</label>
+                    <input type="date" id="DueDate" name="DueDate" style="margin-left:10px">
+                </div>
                 <br />
                 <br />
 
-                <button class="btn btn-sm btn-success" type="submit">Modifica date</button>
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-sm btn-success" type="submit">Modifica date</button>
+                </div>
+                
             }
         </div>
     </div>

@@ -148,6 +148,7 @@ namespace TaskManagementApp.Controllers
             ViewBag.PaginationBaseUrl = "/Tasks/Show/" + id + "/?page";
 
             ViewBag.Users = db.Users;
+            
             SetAccessRights(task);
 
             return View(task);
@@ -618,7 +619,11 @@ namespace TaskManagementApp.Controllers
 
             var project = db.Projects.Find(task.ProjectId);
 
-            var team = db.Teams.Where(t => t.ProjectId == project.ProjectId).First();
+            var team = db.Teams.Where(t => t.ProjectId == project.ProjectId).FirstOrDefault();
+            if (team == null)
+            {
+                return selectList;
+            }
 
             var teamMembers = from teamMember in db.TeamMembers
                                  .Include("User")

@@ -17,9 +17,12 @@
     @if (ViewBag.EsteOrganizator || ViewBag.EsteAdmin)
     {
         <div class="d-flex justify-content-between">
-            <div>
-                <a class="btn btn-outline-success  mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-pencil-square"></i>Vizualizeaza Taskul</a>
-            </div>
+            @if (ViewBag.ButonAfisareTask)
+            {
+                <div>
+                    <a class="btn btn-outline-success  mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-pencil-square"></i>Vizualizeaza Taskul</a>
+                </div>
+            }
             <div>
                 <a class="btn btn-outline-primary  mx-2" href="/Comments/Edit/@Model.CommentId"><i class="bi bi-pencil-square"></i>Editeaza Comentariul</a>
             </div>
@@ -39,9 +42,12 @@
     else
     {
         <div class="d-flex justify-content-between">
-            <div>
-                <a class="btn btn-outline-success  mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-pencil-square"></i>Vizualizeaza Taskul</a>
-            </div>
+            @if (ViewBag.ButonAfisareTask)
+            {
+                <div>
+                    <a class="btn btn-outline-success  mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-pencil-square"></i>Vizualizeaza Taskul</a>
+                </div>
+            }
             <div>
                 <small style="display: flex; justify-content: flex-end;"><b>Date:  </b>@Model.CommentDate</small>
             </div>

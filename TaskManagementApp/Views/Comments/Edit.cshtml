@@ -16,12 +16,12 @@
         method: FormMethod.Post, routeValues: new { id = Model.CommentId }))
         {
             @Html.HiddenFor(t => t.TaskId, new {@Value=@Model.TaskId})
-            @Html.Label("Content", "Continut comentariu", new {@style="font-weight: bold"})
+            @Html.Label("CommentContent", "Continut comentariu", new {@style="font-weight: bold"})
 
-            @Html.TextArea("Content", null, new { @class = "summernote" })
+            @Html.TextArea("CommentContent", null, new { @class = "summernote" })
             <br />
 
-            @Html.ValidationMessage("Content", null, new { @class = "text-danger" })
+            @Html.ValidationMessage("CommentContent", null, new { @class = "text-danger" })
 
             <br />
 

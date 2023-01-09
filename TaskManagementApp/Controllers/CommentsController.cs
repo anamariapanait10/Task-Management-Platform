@@ -217,6 +217,7 @@ namespace TaskManagementApp.Controllers
             ViewBag.AfisareButoane = false;
             ViewBag.EsteOrganizator = false;
             ViewBag.EsteAdmin = false;
+            ViewBag.ButonAfisareTask = true;
 
             if (User.IsInRole("Admin"))
             {
