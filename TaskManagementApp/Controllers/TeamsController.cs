@@ -335,7 +335,6 @@ namespace TaskManagementApp.Controllers
                     foreach (TeamMember m in members)
                     {
                         db.TeamMembers.Remove(m);
-                        db.SaveChanges();
                     }
 
                 }

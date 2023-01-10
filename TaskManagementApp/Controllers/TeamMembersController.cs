@@ -190,7 +190,7 @@ namespace TaskManagementApp.Controllers
                                  .First();
             if (proj.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
-                var tasks = db.Tasks.Include("TeamMember").Include("TeamMember.User").Where(t => t.TeamMemberId  == member.TeamMemberId);
+                var tasks = db.Tasks.Include("TeamMember").Include("TeamMember.User").Include("Stat").Where(t => t.TeamMemberId  == member.TeamMemberId);
                 if (tasks.Count() > 0)
                 {
                     foreach (Task t in tasks)
