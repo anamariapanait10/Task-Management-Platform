@@ -373,7 +373,7 @@ namespace TaskManagementApp.Models
                         StartDate = new DateTime(2022, 12, 24, 8, 00, 00),
                         DueDate = new DateTime(2023, 3, 1, 12, 00, 00),
                         ProjectId = 3,
-                        TeamMemberId = 7
+                        TeamMemberId = 17
                     },
                     new Task
                     {

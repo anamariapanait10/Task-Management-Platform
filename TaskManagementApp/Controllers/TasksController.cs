@@ -111,6 +111,11 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Show(int id)
         {
+            // luam pagina de unde am venit ca sa stim unde sa ne intoarcem
+            var spl = Request.Headers["Referer"].ToString().Substring(10);
+            spl = spl.Substring(spl.IndexOf("/"));
+            ViewBag.returnUrl = spl;
+
             Task task = db.Tasks
                 .Include("Project")
                 .Include("Stat")
