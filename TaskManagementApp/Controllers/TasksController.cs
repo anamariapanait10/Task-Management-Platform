@@ -44,62 +44,131 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            var tasks = from task in db.Tasks
+            if (User.IsInRole("Admin"))
+            {
+                var tasks = from task in db.Tasks
                             .Include("Project")
                             .Include("Stat")
                             .Include("TeamMember.User")
-                        orderby task.TaskTitle
-                        select task;
+                            orderby task.TaskTitle
+                            select task;
 
-            // MOTOR DE CAUTARE
-            var search = "";
-            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
-            {
-                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim(); // eliminam spatiile libere 
+                // MOTOR DE CAUTARE
+                var search = "";
+                if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+                {
+                    search = Convert.ToString(HttpContext.Request.Query["search"]).Trim(); // eliminam spatiile libere 
 
-                List<int> taskIds = db.Tasks.Where(
-                                         at => at.TaskTitle.Contains(search)
-                                         || at.TaskContent.Contains(search)
-                                        ).Select(a => a.TaskId).ToList();
+                    List<int> taskIds = db.Tasks.Where(
+                                             at => at.TaskTitle.Contains(search)
+                                             || at.TaskContent.Contains(search)
+                                            ).Select(a => a.TaskId).ToList();
 
-                tasks = db.Tasks.Where(task => taskIds.Contains(task.TaskId))
-                                    .Include("Project")
-                                    .Include("Stat")
-                                    .Include("TeamMember.User")
-                                    .OrderBy(a => a.StartDate);
-            }
-            ViewBag.SearchString = search;
+                    tasks = db.Tasks.Where(task => taskIds.Contains(task.TaskId))
+                                        .Include("Project")
+                                        .Include("Stat")
+                                        .Include("TeamMember.User")
+                                        .OrderBy(a => a.StartDate);
+                }
+                ViewBag.SearchString = search;
 
-            // Paginare Taskuri
-            int _perPage = 3;
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.message = TempData["message"].ToString();
-            }
-            int totalItems = tasks.Count();
-            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
-            var offset = 0;
+                // Paginare Taskuri
+                int _perPage = 3;
+                if (TempData.ContainsKey("message"))
+                {
+                    ViewBag.message = TempData["message"].ToString();
+                }
+                int totalItems = tasks.Count();
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+                var offset = 0;
 
-            if (!currentPage.Equals(0))
-            {
-                offset = (currentPage - 1) * _perPage;
-            }
-            var paginatedTasks = tasks.Skip(offset).Take(_perPage);
-            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
-            ViewBag.Tasks = paginatedTasks;
-            if (search != "")
-            {
-                ViewBag.PaginationBaseUrl = "/Tasks/Index/?search=" + search + "&page";
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
+                var paginatedTasks = tasks.Skip(offset).Take(_perPage);
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+                ViewBag.Tasks = paginatedTasks;
+                if (search != "")
+                {
+                    ViewBag.PaginationBaseUrl = "/Tasks/Index/?search=" + search + "&page";
+                }
+                else
+                {
+                    ViewBag.PaginationBaseUrl = "/Tasks/Index/?page";
+                }
+
+                ViewBag.Users = db.Users;
+
+                SetAccessRights();
+                return View();
             }
             else
             {
-                ViewBag.PaginationBaseUrl = "/Tasks/Index/?page";
+                var user = _userManager.GetUserId(User);
+                var teams = from team in db.Teams.Include("Project")
+                            join member in db.TeamMembers
+                                   on team.TeamId equals member.TeamId
+                            where member.UserId == user
+                            orderby team.TeamName
+                            select team;
+                var tasks = from task in db.Tasks.Include("Project").Include("Stat").Include("TeamMember.User")
+                            join team in teams
+                                    on task.ProjectId equals team.ProjectId
+                            orderby team.TeamName, task.TaskTitle
+                            select task;
+
+                // MOTOR DE CAUTARE
+                var search = "";
+                if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+                {
+                    search = Convert.ToString(HttpContext.Request.Query["search"]).Trim(); // eliminam spatiile libere 
+
+                    List<int> taskIds = db.Tasks.Where(
+                                             at => at.TaskTitle.Contains(search)
+                                             || at.TaskContent.Contains(search)
+                                            ).Select(a => a.TaskId).ToList();
+
+                    tasks = db.Tasks.Where(task => taskIds.Contains(task.TaskId))
+                                        .Include("Project")
+                                        .Include("Stat")
+                                        .Include("TeamMember.User")
+                                        .OrderBy(a => a.StartDate);
+                }
+                ViewBag.SearchString = search;
+
+                // Paginare Taskuri
+                int _perPage = 3;
+                if (TempData.ContainsKey("message"))
+                {
+                    ViewBag.message = TempData["message"].ToString();
+                }
+                int totalItems = tasks.Count();
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+                var offset = 0;
+
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
+                var paginatedTasks = tasks.Skip(offset).Take(_perPage);
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+                ViewBag.Tasks = paginatedTasks;
+                if (search != "")
+                {
+                    ViewBag.PaginationBaseUrl = "/Tasks/Index/?search=" + search + "&page";
+                }
+                else
+                {
+                    ViewBag.PaginationBaseUrl = "/Tasks/Index/?page";
+                }
+
+                ViewBag.Users = db.Users;
+
+                SetAccessRights();
+                return View();
+
             }
-
-            ViewBag.Users = db.Users;
-
-            SetAccessRights();
-            return View();
         }
 
         // Se afiseaza un singur task in functie de id-ul sau 
