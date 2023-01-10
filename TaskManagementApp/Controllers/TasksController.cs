@@ -780,6 +780,7 @@ namespace TaskManagementApp.Controllers
             ViewBag.EsteAdmin = false;
             ViewBag.ButonAfisareTask = false;
             ViewBag.UserAsign = false;
+            ViewBag.UserCurent = _userManager.GetUserId(User);
 
             if (isOrganizer(task))
             {
@@ -814,6 +815,7 @@ namespace TaskManagementApp.Controllers
             ViewBag.EsteOrganizator = false;
             ViewBag.EsteAdmin = false;
             ViewBag.ButonAfisareTask = true;
+            ViewBag.UserCurent = _userManager.GetUserId(User);
 
             if (User.IsInRole("Admin"))
             {

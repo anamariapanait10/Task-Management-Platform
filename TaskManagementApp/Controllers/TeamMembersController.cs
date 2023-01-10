@@ -86,7 +86,7 @@ namespace TaskManagementApp.Controllers
             else
             {
                 var user = _userManager.GetUserId(User);
-                var teams = from team in db.Teams.Include("Project")
+                var teams = from team in db.Teams.Include("Project").Include("Project.User")
                             join member in db.TeamMembers
                                 on team.TeamId equals member.TeamId 
                             where member.UserId == user

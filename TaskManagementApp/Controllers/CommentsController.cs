@@ -16,6 +16,7 @@ namespace TaskManagementApp.Controllers
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private static string returnUrl = "";
         public CommentsController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
@@ -235,6 +236,9 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id)
         {
+            var spl = Request.Headers["Referer"].ToString().Substring(10);
+            spl = spl.Substring(spl.IndexOf("/"));
+            returnUrl = spl;
             Comment comm = db.Comments
                                 .Include("User")
                                 .Where(c => c.CommentId == id)
@@ -247,7 +251,8 @@ namespace TaskManagementApp.Controllers
             else
             {
                 TempData["message"] = "Nu aveti dreptul sa editati comentariul";
-                return RedirectToAction("Index", "Tasks");
+                TempData["messageType"] = "alert-danger";
+                return Redirect(returnUrl);
             }
         }
 
@@ -279,8 +284,10 @@ namespace TaskManagementApp.Controllers
             }
             else
             {
+               
                 TempData["message"] = "Nu aveti dreptul sa faceti modificari";
-                return RedirectToAction("Index", "Tasks");
+                TempData["messageType"] = "alert-danger";
+                return Redirect(returnUrl);
             }
 
         }
@@ -292,6 +299,7 @@ namespace TaskManagementApp.Controllers
             ViewBag.EsteOrganizator = false;
             ViewBag.EsteAdmin = false;
             ViewBag.ButonAfisareTask = true;
+            ViewBag.UserCurent = _userManager.GetUserId(User);
 
             if (User.IsInRole("Admin"))
             {
