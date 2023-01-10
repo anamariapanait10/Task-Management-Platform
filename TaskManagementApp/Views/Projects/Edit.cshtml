@@ -28,6 +28,8 @@
                 @Html.ValidationMessageFor(m => m.ProjectContent, null, new { @class = "text-danger" })
                 <br />
 
+                @Html.HiddenFor(m => m.UserId, new {Model.UserId})
+
                 <br />
                 <div class="text-center">
                     <button class="btn btn-sm btn-success" type="submit">Modifica proiectul</button>

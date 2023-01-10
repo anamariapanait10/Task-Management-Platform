@@ -33,16 +33,110 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            if (TempData.ContainsKey("message"))
+            if (User.IsInRole("Admin"))
             {
-                ViewBag.message = TempData["message"].ToString();
+                var teams = from team in db.Teams.Include("Project").Include("Project.User")
+                            orderby team.TeamName
+                            select team;
+
+                var search = "";
+
+                // MOTOR DE CAUTARE
+                if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+                {
+                    search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                    List<int> teamIds = db.Teams.Where
+                                        (
+                                            at => at.TeamName.Contains(search)
+                                        ).Select(a => a.TeamId).ToList();
+                    teams = db.Teams.Where(team => teamIds.Contains(team.TeamId))
+                                .Include("Project").Include("Project.User")
+                                .OrderBy(a => a.TeamName);
+                }
+                ViewBag.SearchString = search;
+
+                // Paginare Echipe
+                int _perPage = 3;
+                if (TempData.ContainsKey("message"))
+                {
+                    ViewBag.message = TempData["message"].ToString();
+                }
+                int totalItems = teams.Count();
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+                var offset = 0;
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
+                var paginatedTeams = teams.Skip(offset).Take(_perPage);
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+                ViewBag.Teams = paginatedTeams;
+                if (search != "")
+                {
+                    ViewBag.PaginationBaseUrl = "/Teams/Index/?search=" + search + "&page";
+                }
+                else
+                {
+                    ViewBag.PaginationBaseUrl = "/Teams/Index/?page";
+                }
+
+                return View();
             }
-            ViewBag.TeamMembers = db.TeamMembers.Include("Team").Include("User");
-            ViewBag.Teams = db.Teams.Include("Project");
-            ViewBag.Tasks = db.Tasks.Include("Stat").Include("Project").Include("TeamMember");
-            ViewBag.Users = db.Users;
-            SetAccessRights();
-            return View();
+            else
+            {
+                var user = _userManager.GetUserId(User);
+                var teams = from team in db.Teams.Include("Project")
+                            join member in db.TeamMembers
+                                on team.TeamId equals member.TeamId 
+                            where member.UserId == user
+                            orderby team.TeamName
+                            select team;
+
+                var search = "";
+
+                // MOTOR DE CAUTARE
+                if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+                {
+                    search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                    List<int> teamIds = db.Teams.Where
+                                        (
+                                            at => at.TeamName.Contains(search)
+                                        ).Select(a => a.TeamId).ToList();
+                    teams = db.Teams.Where(team => teamIds.Contains(team.TeamId))
+                                .Include("Project").Include("Project.User")
+                                .OrderBy(a => a.TeamName);
+                }
+                ViewBag.SearchString = search;
+
+                // Paginare Echipe
+                int _perPage = 3;
+                if (TempData.ContainsKey("message"))
+                {
+                    ViewBag.message = TempData["message"].ToString();
+                }
+                int totalItems = teams.Count();
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+                var offset = 0;
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
+                var paginatedTeams = teams.Skip(offset).Take(_perPage);
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+                ViewBag.Teams = paginatedTeams;
+                if (search != "")
+                {
+                    ViewBag.PaginationBaseUrl = "/Teams/Index/?search=" + search + "&page";
+                }
+                else
+                {
+                    ViewBag.PaginationBaseUrl = "/Teams/Index/?page";
+                }
+
+                return View();
+            }
         }
 
         [Authorize(Roles = "User,Admin")]

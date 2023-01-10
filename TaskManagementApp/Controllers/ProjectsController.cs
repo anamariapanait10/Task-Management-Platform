@@ -39,76 +39,154 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            var projs = from proj in db.Projects.Include("User")
-                        orderby proj.ProjectTitle
-                        select proj;
-            var search = "";
-            // MOTOR DE CAUTARE
-            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            if (User.IsInRole("Admin"))
             {
-                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim(); // eliminam spatiile libere
-                // Cautare in proiect (Title si Content)
-                List<int> projectIds = db.Projects.Where
-                                        (
-                                         at => at.ProjectTitle.Contains(search)
-                                         || at.ProjectContent.Contains(search)
-                                        ).Select(a => a.ProjectId).ToList();
-                // Lista proiectelor care contin cuvantul cautat
-                projs = db.Projects.Where(project => projectIds.Contains(project.ProjectId))
-                                    .Include("User")
-                                    .OrderBy(a => a.ProjectDate);
-            }
-            ViewBag.SearchString = search;
-            // AFISARE PAGINATA
-            // Alegem sa afisam 3 proiecte pe pagina
-            int _perPage = 3;
+                var projs = from proj in db.Projects.Include("User")
+                            orderby proj.ProjectTitle
+                            select proj;
+                var search = "";
+                // MOTOR DE CAUTARE
+                if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+                {
+                    search = Convert.ToString(HttpContext.Request.Query["search"]).Trim(); // eliminam spatiile libere
+                    // Cautare in proiect (Title si Content)
+                    List<int> projectIds = db.Projects.Where
+                                            (
+                                             at => at.ProjectTitle.Contains(search)
+                                             || at.ProjectContent.Contains(search)
+                                            ).Select(a => a.ProjectId).ToList();
+                    // Lista proiectelor care contin cuvantul cautat
+                    projs = db.Projects.Where(project => projectIds.Contains(project.ProjectId))
+                                        .Include("User")
+                                        .OrderBy(a => a.ProjectDate);
+                }
+                ViewBag.SearchString = search;
+                // AFISARE PAGINATA
+                // Alegem sa afisam 3 proiecte pe pagina
+                int _perPage = 3;
 
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.message = TempData["message"].ToString();
-            }
+                if (TempData.ContainsKey("message"))
+                {
+                    ViewBag.message = TempData["message"].ToString();
+                }
 
-            // Fiind un numar variabil de proiecte, verificam de fiecare data utilizand 
-            // metoda Count()
-            int totalItems = projs.Count();
+                // Fiind un numar variabil de proiecte, verificam de fiecare data utilizand 
+                // metoda Count()
+                int totalItems = projs.Count();
 
-            // Se preia pagina curenta din View-ul asociat
-            // Numarul paginii este valoarea parametrului page din ruta
-            // /Projects/Index?page=valoare
-            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+                // Se preia pagina curenta din View-ul asociat
+                // Numarul paginii este valoarea parametrului page din ruta
+                // /Projects/Index?page=valoare
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
 
-            // Pentru prima pagina offsetul o sa fie zero
-            // Pentru pagina 2 o sa fie 3 
-            // Asadar offsetul este egal cu numarul de proiecte care au fost deja afisate pe paginile anterioare
-            var offset = 0;
+                // Pentru prima pagina offsetul o sa fie zero
+                // Pentru pagina 2 o sa fie 3 
+                // Asadar offsetul este egal cu numarul de proiecte care au fost deja afisate pe paginile anterioare
+                var offset = 0;
 
-            // Se calculeaza offsetul in functie de numarul paginii la care suntem
-            if (!currentPage.Equals(0))
-            {
-                offset = (currentPage - 1) * _perPage;
-            }
+                // Se calculeaza offsetul in functie de numarul paginii la care suntem
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
 
-            // Se preiau proiectele corespunzatoare pentru fiecare pagina la care ne aflam 
-            // in functie de offset
-            var paginatedProjects = projs.Skip(offset).Take(_perPage);
+                // Se preiau proiectele corespunzatoare pentru fiecare pagina la care ne aflam 
+                // in functie de offset
+                var paginatedProjects = projs.Skip(offset).Take(_perPage);
 
-            // Preluam numarul ultimei pagini
-            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+                // Preluam numarul ultimei pagini
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
 
-            // Trimitem proiectele cu ajutorul unui ViewBag catre View-ul corespunzator
-            ViewBag.Projects = paginatedProjects;
+                // Trimitem proiectele cu ajutorul unui ViewBag catre View-ul corespunzator
+                ViewBag.Projects = paginatedProjects;
 
-            if (search != "")
-            {
-                ViewBag.PaginationBaseUrl = "/Projects/Index/?search=" + search + "&page";
+                if (search != "")
+                {
+                    ViewBag.PaginationBaseUrl = "/Projects/Index/?search=" + search + "&page";
+                }
+                else
+                {
+                    ViewBag.PaginationBaseUrl = "/Projects/Index/?page";
+                }
+
+                SetAccessRights();
+                return View();
             }
             else
             {
-                ViewBag.PaginationBaseUrl = "/Projects/Index/?page";
-            }
+                var user = _userManager.GetUserId(User);
+                var projs = from proj in db.Projects.Include("User")
+                            where proj.UserId == user
+                            orderby proj.ProjectTitle
+                            select proj;
+                var search = "";
+                // MOTOR DE CAUTARE
+                if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+                {
+                    search = Convert.ToString(HttpContext.Request.Query["search"]).Trim(); // eliminam spatiile libere
+                    // Cautare in proiect (Title si Content)
+                    List<int> projectIds = db.Projects.Where
+                                            (
+                                             at => at.ProjectTitle.Contains(search)
+                                             || at.ProjectContent.Contains(search)
+                                            ).Select(a => a.ProjectId).ToList();
+                    // Lista proiectelor care contin cuvantul cautat
+                    projs = db.Projects.Where(project => projectIds.Contains(project.ProjectId))
+                                        .Include("User")
+                                        .OrderBy(a => a.ProjectDate);
+                }
+                ViewBag.SearchString = search;
+                // AFISARE PAGINATA
+                // Alegem sa afisam 3 proiecte pe pagina
+                int _perPage = 3;
 
-            SetAccessRights();
-            return View();
+                if (TempData.ContainsKey("message"))
+                {
+                    ViewBag.message = TempData["message"].ToString();
+                }
+
+                // Fiind un numar variabil de proiecte, verificam de fiecare data utilizand 
+                // metoda Count()
+                int totalItems = projs.Count();
+
+                // Se preia pagina curenta din View-ul asociat
+                // Numarul paginii este valoarea parametrului page din ruta
+                // /Projects/Index?page=valoare
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+                // Pentru prima pagina offsetul o sa fie zero
+                // Pentru pagina 2 o sa fie 3 
+                // Asadar offsetul este egal cu numarul de proiecte care au fost deja afisate pe paginile anterioare
+                var offset = 0;
+
+                // Se calculeaza offsetul in functie de numarul paginii la care suntem
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
+
+                // Se preiau proiectele corespunzatoare pentru fiecare pagina la care ne aflam 
+                // in functie de offset
+                var paginatedProjects = projs.Skip(offset).Take(_perPage);
+
+                // Preluam numarul ultimei pagini
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+
+                // Trimitem proiectele cu ajutorul unui ViewBag catre View-ul corespunzator
+                ViewBag.Projects = paginatedProjects;
+
+                if (search != "")
+                {
+                    ViewBag.PaginationBaseUrl = "/Projects/Index/?search=" + search + "&page";
+                }
+                else
+                {
+                    ViewBag.PaginationBaseUrl = "/Projects/Index/?page";
+                }
+
+                SetAccessRights();
+                return View();
+            }
         }
 
 
