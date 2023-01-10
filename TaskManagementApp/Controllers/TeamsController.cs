@@ -30,7 +30,7 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            var teams = from team in db.Teams.Include("Project")
+            var teams = from team in db.Teams.Include("Project").Include("Project.User")
                         orderby team.TeamName
                         select team;
 
