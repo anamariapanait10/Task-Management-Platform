@@ -1,0 +1,172 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = TaskManagementApp
+build_property.RootNamespace = TaskManagementApp
+build_property.ProjectDir = C:\Users\stefa\OneDrive\Desktop\Facultate\2.1 ASP sem 1 an 2\Proiect_ASP\TaskManagementApp\TaskManagementApp\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\stefa\OneDrive\Desktop\Facultate\2.1 ASP sem 1 an 2\Proiect_ASP\TaskManagementApp\TaskManagementApp
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Areas/Identity/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Comments/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWVudHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Comments/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWVudHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Comments/New.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWVudHNcTmV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Projects/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvamVjdHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Projects/EditOrg.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvamVjdHNcRWRpdE9yZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Projects/EditOrgDel.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvamVjdHNcRWRpdE9yZ0RlbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Projects/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvamVjdHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Projects/New.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvamVjdHNcTmV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Projects/Show.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvamVjdHNcU2hvdy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/CommentInfo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbW1lbnRJbmZvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/ProjectInfo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFByb2plY3RJbmZvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/TaskInfo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFRhc2tJbmZvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/TeamInfo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFRlYW1JbmZvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/UserInfo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFVzZXJJbmZvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/_LoginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Tasks/AssignTask.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza3NcQXNzaWduVGFzay5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Tasks/ChangeDate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza3NcQ2hhbmdlRGF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Tasks/ChangeState.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza3NcQ2hhbmdlU3RhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Tasks/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza3NcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Tasks/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Tasks/New.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza3NcTmV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Tasks/Show.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza3NcU2hvdy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/TeamMembers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbU1lbWJlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/TeamMembers/Show.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbU1lbWJlcnNcU2hvdy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Teams/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Teams/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Teams/New.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbXNcTmV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Teams/Show.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbXNcU2hvdy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Users/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Users/Show.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcU2hvdy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/stefa/OneDrive/Desktop/Facultate/2.1 ASP sem 1 an 2/Proiect_ASP/TaskManagementApp/TaskManagementApp/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-735idszt0p

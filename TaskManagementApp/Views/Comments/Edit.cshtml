@@ -1,0 +1,30 @@
+﻿@model TaskManagementApp.Models.Comment
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<div class="row">
+    <div class="col-6 offset-3">
+        <h2 class="text-center mt-3">Edit the Comment</h2>
+        <br />
+        @using (Html.BeginForm(controllerName: "Comments", actionName: "Edit",
+
+        method: FormMethod.Post, routeValues: new { id = Model.CommentId }))
+        {
+            @Html.HiddenFor(t => t.TaskId, new {@Value=@Model.TaskId})
+            @Html.Label("CommentContent", "Comment Content", new {@style="font-weight: bold"})
+
+            @Html.TextArea("CommentContent", null, new { @class = "summernote" })
+            <br />
+
+            @Html.ValidationMessage("CommentContent", null, new { @class = "text-danger" })
+
+            <br />
+            <br />
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">Edit comment</button>
+            </div>
+        }
+    </div>
+</div>

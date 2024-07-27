@@ -1,0 +1,37 @@
+﻿@model TaskManagementApp.Models.Project
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+<h2 class="text-center mt-5">Change organizer</h2>
+<br />
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            @using (Html.BeginForm(actionName: "EditOrgDel", controllerName: "Projects",
+            method: FormMethod.Post,
+            routeValues: new { UId = ViewBag.ProjEditOrgOrg, TId = ViewBag.ProjEditOrgTeam }))
+            {
+                    <br />
+                        @Html.HiddenFor(m => m.ProjectTitle, new { Model.ProjectTitle })
+                    <br />
+
+                    <br />
+                        @Html.HiddenFor(m => m.ProjectContent, new { Model.ProjectContent })
+                    <br />
+
+                    <label>Selectati noul organizator</label>
+                        <select class="form-control" asp-for="UserId" asp-items="Model.UsersList">
+                               <option disabled selected value="null">Select the new organizer</option>
+                        </select>
+
+                    <button class="btn btn-sm btn-success" type="submit">Change organizer</button>
+            }
+        </div>
+    </div>
+</div>

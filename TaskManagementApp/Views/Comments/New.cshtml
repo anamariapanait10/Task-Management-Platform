@@ -1,0 +1,49 @@
+﻿@model TaskManagementApp.Models.Comment
+
+
+<h2 class="text-center mt-5">Add new comment</h2>
+<br />
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-6 offset-3">
+
+            @using (Html.BeginForm(actionName: "New", controllerName: "Comments",
+            method: FormMethod.Post))
+            {
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                @Html.Label("CommentContent", "Comment content", new {@style="font-weight: bold"})
+                <br />
+                @Html.TextBox("CommentContent", null, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.CommentContent, "", new { @class = "text-danger" })
+                <br />
+
+                @if (ViewBag.TasksList != null)
+                {
+                    <label style="font-weight: bold">Select the task for which you want to leave a comment</label>
+                    @Html.DropDownListFor(m => m.TaskId, new SelectList(ViewBag.TasksList, "Value", "Text"),
+            "Select the task", new { @class = "form-control text-center" })
+                    @Html.ValidationMessageFor(m => m.TaskId, null, new { @class = "text-danger" })
+
+                    <br />
+                    <br />
+
+                    <div class="text-center">
+                        <button class="btn btn-success" type="submit">Add comment</button>
+                    </div>
+                }
+                else
+                {
+                    <label>You have no task in the projects you are a part of. Comment cannot be added.</label>
+                    <br />
+                    <br />
+                    <div class="text-center">
+                        <a class="btn btn-success" href="/Comments/Index">Cancel</a>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+</div>

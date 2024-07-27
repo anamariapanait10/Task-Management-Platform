@@ -1,0 +1,78 @@
+﻿@model TaskManagementApp.Models.Task
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+<script type="text/javascript">
+    function SetMinSD() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        today = yyyy + '-' + mm + '-' + dd;
+        var SD = document.getElementById('StartDate');
+        SD.setAttribute("min", today);
+    }
+    function myChangeFunction(SD) {
+        var DD = document.getElementById('DueDate');
+        DD.setAttribute("min", SD.value);
+    }
+</script>
+
+<h2 class="text-center mt-5">Change task state</h2>
+<br />
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            @using (Html.BeginForm(actionName: "ChangeState", controllerName: "Tasks",
+            method: FormMethod.Post,
+            routeValues: new { id = Model.TaskId }))
+            {
+                @Html.HiddenFor(m => m.TaskTitle, new {@Value=@Model.TaskTitle })
+                <br />
+
+                @Html.HiddenFor(m => m.TaskContent, new {@Value=@Model.TaskContent })
+                <br />
+
+                @Html.HiddenFor(m => m.ProjectId, new {@Value=@Model.ProjectId })
+                <br />
+
+                @Html.HiddenFor(m => m.TeamMemberId, new {@Value=@Model.TeamMemberId })
+                <br />
+
+                <label>Select the new state of the task</label>
+                @Html.DropDownListFor(m => m.StatId, new SelectList(Model.StatsList, "Value", "Text"),
+            "Select state", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.StatId, null, new { @class = "text-danger" })
+                <br />
+                <br />
+
+                @if(ViewBag.IsOrganizer || ViewBag.IsAdmin)
+                {
+                    <label for="StartDate">Start Date:</label>
+                    <input type="date" id="StartDate" name="StartDate" style="margin-left:10px" onfocus="SetMinSD()" onchange="myChangeFunction(this)">
+                    <br />
+                    <br />
+
+                    <label for="DueDate">Due Date:</label>
+                    <input type="date" id="DueDate" name="DueDate" style="margin-left:10px">
+                    <br />
+                    <br />
+                }
+                <button class="btn btn-sm btn-success" type="submit">Change</button>
+            }
+        </div>
+    </div>
+</div>

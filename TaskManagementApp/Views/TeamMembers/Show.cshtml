@@ -1,0 +1,217 @@
+﻿@{
+    ViewBag.Title = "Show";
+}
+
+<h2>Team page</h2>
+<br />
+@if (ViewBag.Message != null)
+{
+    <h2 class="alert-success p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+}
+
+<br />
+
+<div class="card">
+    <h1 class="text-center alert-success py-3 px-3 rounded-2">@ViewBag.Team.TeamName</h1>
+    <br/>
+    <br/>
+    <div>
+        <h2 class="card-title text-center">Project assigned to this team:</h2>
+        <br/>
+        <div class="d-flex justify-content-sm-around flex-wrap" style="gap:20px">
+            <div class="card">
+                <h2 class="card-title text-center alert-success" style="background-color:white">@ViewBag.Project.ProjectTitle</h2>
+                <div class="d-flex justify-content-between flex-column mt-2 mx-4">
+                    <div class="card-text"><i class="bi bi-list-task"></i> <b>Description: </b>@Html.Raw(@ViewBag.Project.ProjectContent)</div>
+                </div>
+                <br />
+                @if(ViewBag.ShowButtons == true && ViewBag.IsAdmin) 
+                {
+                    <div class="d-flex justify-content-center flex-row" style="gap:20px">
+                        <a class="btn btn-success" href="/Projects/Edit/@ViewBag.Project.ProjectId">Edit project</a>
+                        <form method="post" action="/Projects/Delete/@ViewBag.Project.ProjectId">
+                            <button class="btn btn-danger" type="submit">Delete project</button>
+                        </form>
+                    </div>
+                    <br/>
+                }
+                else if(ViewBag.ShowButtons == true && ViewBag.IsOrganizer)
+                {
+                    <div class="d-flex justify-content-center flex-row">
+                        <a class="btn btn-success" href="/Projects/Edit/@ViewBag.Project.ProjectId">Edit project</a>
+                    </div>
+                    <br/>
+                }
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+
+    <div>
+        <h2 class="card-title text-center">Team Members:</h2>
+        <br />
+        <div class="d-flex justify-content-sm-around flex-wrap" style="gap:20px">
+                @if (ViewBag.TeamMembers != null)
+                {
+                    @foreach (TaskManagementApp.Models.TeamMember member in ViewBag.TeamMembers)
+                    {
+                        <div class="card">
+                            @if (ViewBag.Organizer == @member.UserId)
+                            {
+                                <div class="d-flex justify-content-center flex-row">
+                                    <h6>ORGANIZATOR</h6>
+                                </div>
+                            }
+                            @Html.Partial("UserInfo", @member.User)
+                            @if (ViewBag.ShowButtons == true && ViewBag.IsAdmin)
+                            {
+                                @if (ViewBag.Organizer == @member.UserId && ViewBag.Admin == @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrgDel/@member.UserId/@ViewBag.Team.TeamId">Leave team</a>
+                                    </div>
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrg/@member.UserId/@ViewBag.Team.TeamId">Revoke rights</a>
+                                    </div>
+                                }
+                                else if (ViewBag.Organizer == @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrgDel/@member.UserId/@ViewBag.Team.TeamId">Delete organizer</a>
+                                    </div>
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <a class="btn btn-danger" style="margin-bottom:10px" href="/Projects/EditOrg/@member.UserId/@ViewBag.Team.TeamId">Revoke rights</a>
+                                    </div>
+                                }
+                                else if (ViewBag.Admin == @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <form method="post" action="/TeamMembers/Delete/@member.UserId/@ViewBag.Team.TeamId">
+                                            <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Leave team</button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <form method="post" action="/TeamMembers/Delete/@member.UserId/@ViewBag.Team.TeamId">
+                                            <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Delete member</button>
+                                        </form>
+                                    </div>
+                                }
+                            }
+                            else if (ViewBag.ShowButtons == true && ViewBag.IsOrganizer)
+                            {
+                                @if (ViewBag.Organizer != @member.UserId)
+                                {
+                                    <div class="d-flex justify-content-center flex-row">
+                                        <form method="post" action="/TeamMembers/Delete/@member.UserId/@ViewBag.Team.TeamId">
+                                            <button class="btn btn-danger" type="submit" style="margin-bottom:10px">Delete member</button>
+                                        </form>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                }
+        </div>
+    </div>
+    <br />
+    <br />
+
+    <div class="p-3 mb-0 pb-0 pt-2">
+        <h2 class="text-center">Team Tasks:</h2>
+        <br/> 
+        <div class="container-fluid" style="overflow-x:scroll">
+            <div class="d-flex flex-row flex-nowrap">
+                <div class="column d-flex justify-content-sm-around flex-direction-column" style="gap:10px">
+                    <div class="card" style="box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);transition:0.3s;border-radius:5px;gap:10px;width:350px;height:fit-content;max-height:400px">
+                        <div class="card-header">
+                            <h4 class="card-title text-center alert-success">NOT ASSIGNED</h4>
+                        </div>
+                        <div class="card-body" style="overflow-y:scroll">
+                            <p class="card-text text-center">Here are the unassigned tasks. Once assigned, the task will move to the TO DO table.</p>
+                            <ul class="list-group">
+                                @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+                                {
+                                    @if(task.Stat.StatName == "Not Assigned")
+                                    {
+                                    <li class="card list-item" style="margin:5px;border-radius:5px">
+                                            <!--<div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/AssignTask/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-person-lines-fill" style="font-size:small">Assign</i></a></div>-->
+                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
+                                    </li>
+                                    } 
+                                } 
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <a class="nav-link text-dark btn btn-light" style="border-radius: 5px" asp-area="" asp-controller="Tasks" asp-action="New"><i class="bi bi-plus-circle"></i> Task</a>
+                        </div>
+                    </div>
+                    <div class="card" style="box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);transition:0.3s;border-radius:5px;gap:10px;width:350px;height:fit-content;max-height:400px">
+                        <div class="card-header">
+                            <h4 class="card-title text-center alert-success">TO DO</h4>
+                        </div>
+                        <div class="card-body" style="overflow-y:scroll">
+                            <p class="card-text text-center">Here are the tasks assigned but not started. Once the status is changed, they will move to the IN PROGRESS table.</p>
+                            <ul class="list-group">
+                                @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+                                {
+                                    @if (task.Stat.StatName == "Not Started")
+                                    {
+                                        <li class="card list-item" style="margin:5px;border-radius:5px">
+                                            <div style="font-size:medium;margin:10px">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="card-footer" style="height:50px"></div>
+                    </div>
+                    <div class="card" style="box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);transition:0.3s;border-radius:5px;gap:10px;width:350px;height:fit-content;max-height:400px">
+                        <div class="card-header">
+                            <h4 class="card-title text-center alert-success">IN PROGRESS</h4>
+                        </div>
+                        <div class="card-body" style="overflow-y:scroll">
+                            <p class="card-text text-center">Here are the tasks that have already been started.</p>
+                            <ul class="list-group">
+                                @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+                                {
+                                    @if(task.Stat.StatName == "In Progress")
+                                    {
+                                        <li class="card list-item" style="margin:5px;border-radius:5px">
+                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="card-footer" style="height:50px"></div>
+                    </div>
+                    <div class="card" style="box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);transition:0.3s;border-radius:5px;gap:10px;width:400px;height:fit-content;max-height:400px">
+                        <div class="card-header">
+                            <h4 class="card-title text-center alert-success">COMPLETED</h4>
+                        </div>
+                        <div class="card-body" style="overflow-y:scroll">
+                            <p class="card-text text-center">Here are the completed tasks.</p>
+                            <ul class="list-group">
+                                @foreach (TaskManagementApp.Models.Task task in ViewBag.Tasks)
+                                {
+                                    @if(task.Stat.StatName == "Completed")
+                                    {
+                                        <li class="card list-item" style="margin:5px;border-radius:5px">
+                                            <div style="font-size:medium;margin:10px;">@task.TaskTitle<a class="btn btn-sm" href="/Tasks/Show/@task.TaskId" style="float:right;background-color:aliceblue"><i class="bi bi-info-circle"> Info</i></a></div>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="card-footer" style="height:50px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                            

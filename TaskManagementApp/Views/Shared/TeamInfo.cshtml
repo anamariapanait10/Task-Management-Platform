@@ -1,0 +1,14 @@
+﻿@model TaskManagementApp.Models.Team
+
+
+<div class="card-body">
+
+    <h3 class="card-title alert-success py-3 px-3 rounded-2">@Model.TeamName</h3>
+    <br />
+    <div><i class="bi bi-globe"></i><b> Project: </b> @Model.Project.ProjectTitle</div>
+
+    <div class="d-flex justify-content-between flex-row mt-2">
+        <div><i class="bi bi-person"></i> <b>Organizer: </b> @Model.Project.User.UserName</div>
+        <span><b>Creation date: </b>@Model.TeamDate</span>
+    </div>
+</div>

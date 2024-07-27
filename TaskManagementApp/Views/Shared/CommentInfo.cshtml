@@ -1,0 +1,56 @@
+﻿@model TaskManagementApp.Models.Comment
+
+<div class="card p-3">
+    <div class="alert-secondary py-2 px-4 rounded-2 row">
+        <div class="col-10 px-0">
+            <span class="d-block"><b>Task: </b> @Model.Task.TaskTitle</span>
+            <span class="text-muted"><b>Project: </b> @Model.Task.Project.ProjectTitle</span>
+        </div>
+        <span class="col-2 text-end"><i class="bi bi-person"></i>@Model.User.UserName</span>
+
+    </div>
+    <br />
+    <div><b>Commented: </b> @Html.Raw(@Model.CommentContent)</div>
+    <br />
+    <br />
+
+    @if (Model.UserId == ViewBag.CurrentUser || ViewBag.IsAdmin)
+    {
+        <div class="d-flex justify-content-between">
+            @if (ViewBag.ShowButtonTask)
+            {
+                <div>
+                    <a class="btn btn-outline-success  mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-pencil-square"></i>Visualize task</a>
+                </div>
+            }
+            <div>
+                <a class="btn btn-outline-primary  mx-2" href="/Comments/Edit/@Model.CommentId"><i class="bi bi-pencil-square"></i>Edit comment</a>
+            </div>
+
+            <div>
+                <form method="post" action="/Comments/Delete/@Model.CommentId">
+                    <button class="btn btn-outline-danger  mx-2" type="submit"><i class="bi bi-trash"></i>Delete comment</button>
+                </form>
+
+            </div>
+            <div>
+                <small style="display: flex; justify-content: flex-end"><b>Date: </b>@Model.CommentDate</small>
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-between">
+            @if (ViewBag.ShowButtonTask)
+            {
+                <div>
+                    <a class="btn btn-outline-success  mx-2" href="/Tasks/Show/@Model.TaskId"><i class="bi bi-pencil-square"></i>Visualize task</a>
+                </div>
+            }
+            <div>
+                <small style="display: flex; justify-content: flex-end;"><b>Date: </b>@Model.CommentDate</small>
+            </div>
+        </div>
+    }
+</div>

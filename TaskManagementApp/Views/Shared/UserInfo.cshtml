@@ -1,0 +1,39 @@
+﻿@model TaskManagementApp.Models.ApplicationUser
+
+<div>
+    <div class="card-body d-flex justify-content-between flex-column">
+        <div>
+        <p><i class="bi bi-person"> </i> UserName: @Model.UserName</p>
+
+        <p><i class="bi bi-envelope"></i> User's email: @Model.Email</p>
+
+        @if (@Model.FirstName != null)
+        {
+            <p><i class="bi bi-person"> </i> User's first name: @Model.FirstName</p>
+        }
+
+        @if (@Model.LastName != null)
+        {
+            <p><i class="bi bi-person"> </i> User's last name: @Model.LastName</p>
+        }
+
+
+        @if (@Model.PhoneNumber != null)
+        {
+            <p><i class="bi bi-phone"></i> User's phone number: @Model.PhoneNumber</p>
+        }
+        </div>
+
+
+        @if (ViewBag.IsAdmin == true && ViewBag.ShowButtons == true)
+        {
+            <div class="d-flex justify-content-center flex-row" style="gap:5px">
+
+                <div> <a class="btn btn-sm btn-success" href="/Users/Edit/@Model.Id"> Edit user</a> </div>
+
+                <div> <a class="btn btn-sm btn-success" href="/Users/Show/@Model.Id"> Visualize user</a> </div>
+
+            </div>
+        }
+    </div>
+</div>

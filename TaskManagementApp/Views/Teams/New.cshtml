@@ -1,0 +1,39 @@
+﻿@model TaskManagementApp.Models.Team
+
+
+<h2 class="text-center mt-5">Add new team</h2>
+<br />
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-6 offset-3">
+
+            @using (Html.BeginForm(actionName: "New", controllerName: "Teams",
+            method: FormMethod.Post))
+            {
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                @Html.Label("TeamName", "Team Name", new {@style="font-weight: bold"})
+                <br />
+                @Html.TextBox("TeamName", null, new { @class = "form-control" })
+
+                @Html.ValidationMessageFor(m => m.TeamName, "", new { @class = "text-danger" })
+                <br />
+
+                <label style="font-weight: bold">Select the project</label>
+                @Html.DropDownListFor(m => m.ProjectId, new SelectList(Model.ProjectsList, "Value", "Text"),
+            "Select project", new { @class = "form-control text-center" })
+
+                @Html.ValidationMessageFor(m => m.ProjectId, null, new { @class = "text-danger" })
+                <br />
+                <br />
+
+                <div class="text-center">
+                    <button class="btn btn-success" type="submit">Add team</button>
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>

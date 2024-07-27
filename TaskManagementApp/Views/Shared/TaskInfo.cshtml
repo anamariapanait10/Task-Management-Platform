@@ -1,0 +1,65 @@
+﻿@model TaskManagementApp.Models.Task
+
+<div class="alert-secondary py-2 px-4 rounded-2">
+    <span class="card-title d-block mb-0" style="font-size: 22px; font-weight: 400"><b>@Model.TaskTitle</b></span>
+    <span class="card-subtitle d-block" style="font-size: 14px; font-weight: 200">@Model.Project.ProjectTitle</span>
+</div>
+
+<div class="p-3" style="display:flex">
+    <div>
+        <table style="width:300px">
+            <tbody style ="padding-right: 10px">
+                @if (@Model.Stat != null)
+                {
+                    <tr>
+                        <td >
+                            <i class="bi bi-pass"></i><b> Task state:</b>
+                        </td>
+                        <td>
+                            <span>@Model.Stat.StatName</span>
+                        </td>
+                    </tr>
+                }
+                @if (@Model.StartDate != null)
+                {
+                    <tr>
+                        <td>
+                            <i class="bi bi-calendar2-check"></i> <b>Start date:</b>
+                        </td>
+                        <td>
+                            <span>@Model.StartDate</span>
+                        </td>
+                    </tr>
+                }
+                @if (@Model.DueDate != null)
+                {
+                    <tr>
+                        <td>
+                            <i class="bi bi-calendar2-x"></i> <b>Due date:</b>
+                        </td>
+                        <td>
+                            <span>@Model.DueDate</span>
+                        </td>
+                    </tr>
+                }
+                @if (@Model.TeamMemberId != null)
+                {
+                    <tr>
+                        <td>
+                            <i class="bi bi-person"></i> <b>Assigned to:</b>
+                        </td>
+                        <td>
+                            <span>@Model.TeamMember.User.UserName</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div style="margin-left: 20px; padding-left:20px; border-left: 1px solid lightgray">
+        <b>Content: </b>
+        <span style="text-overflow: ellipsis">@Html.Raw(@Model.TaskContent)</span>
+    </div>
+</div>
+
+

@@ -1,0 +1,102 @@
+﻿@model TaskManagementApp.Models.Project
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+
+<br />
+
+<div class="card">
+
+    @Html.Partial("ProjectInfo", Model)
+
+    <div class="p-3 mb-0 pb-0 pt-2">
+        <h2 class="text-center">Tasks</h2>
+        @if (ViewBag.ProjectsTasks != null)
+        {
+            @foreach (TaskManagementApp.Models.Task task in ViewBag.ProjectsTasks)
+            {
+            <div class="card m-3">
+                @Html.Partial("TaskInfo", task)
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Show/@task.TaskId"><i class="bi bi-info-circle"></i> Info</a>
+                    </div>
+
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@task.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Delete task</button>
+                        </form>
+                    </div>
+                </div>
+            <br />
+            </div>
+            }
+        }
+    </div>
+
+    @* Paging the tasks *@
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @if (ViewBag.lastPage > 0)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@ViewBag.PaginationBaseUrl=1" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    @for (int i = 1; i <= ViewBag.lastPage; i++)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@ViewBag.PaginationBaseUrl=@i">
+                                @(
+                                    i
+                                    )
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item">
+                        <a class="page-link" href="@ViewBag.PaginationBaseUrl=@(ViewBag.lastPage)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <br/>
+                    <div>No task found!</div>
+                }
+            </ul>
+        </nav>
+    </div>
+
+    <br />
+
+    <div class="d-flex flex-row justify-content-between p-3 border-1 border-top">
+
+        @if (ViewBag.ShowButtons == true && (ViewBag.IsOrganizer || ViewBag.IsAdmin))
+        {
+
+            <a class="btn btn-success" href="/Projects/Edit/@Model.ProjectId">Edit project</a>
+
+            <a class="btn btn-success" href="/Tasks/New">Add task</a>
+
+            <form method="post" action="/Projects/Delete/@Model.ProjectId">
+
+                <button class="btn btn-danger" type="submit">Delete project</button>
+
+            </form>
+        }
+        else
+        {
+            <a class="btn btn-success" href="/Tasks/New">Add task</a>
+        }
+
+    </div>
+</div>

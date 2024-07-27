@@ -1,0 +1,15 @@
+﻿@model TaskManagementApp.Models.Project
+
+<div class="card-body">
+
+    <h3 class="card-title alert-success py-3 px-3 rounded-2">@Model.ProjectTitle</h3>
+
+    <div class="d-flex justify-content-between flex-column mt-3 mx-4">
+        <div class="card-text"> <i class="bi bi-list-task"></i> <b>Description: </b>@Html.Raw(@Model.ProjectContent)</div>
+        <br />
+        <div><i class="bi bi-person"></i><b>Organizer: </b> @Model.User.UserName</div>
+
+        <div><i class="bi bi-calendar-event"></i><b>Creation date: </b> @Model.ProjectDate</div>
+    </div>
+
+</div>

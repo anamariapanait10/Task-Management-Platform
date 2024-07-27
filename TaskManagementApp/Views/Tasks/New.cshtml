@@ -1,0 +1,40 @@
+﻿@model TaskManagementApp.Models.Task
+
+
+<h2 class="text-center mt-3">Add new task</h2>
+<div class="container mt-2">
+    <div class="row">
+        <div class="col-6 offset-3">
+            @using (Html.BeginForm(actionName: "New", controllerName: "Tasks",
+            method: FormMethod.Post))
+            {
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                @Html.Label("TaskTitle", "Task Title", new {@style="font-weight: bold"})
+                <br />
+                @Html.TextBox("TaskTitle", null, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.TaskTitle, "", new { @class = "text-danger" })
+                <br />
+
+                @Html.Label("TaskContent", "Task Content", new {@style="font-weight: bold"})
+                <br />
+                @Html.TextArea("TaskContent", null, new { @class = "form-control summernote" })
+                @Html.ValidationMessage("TaskContent", null, new { @class = "text-danger" })
+                <br />
+
+                <label style="font-weight: bold">Assigned to project: </label>
+                <label style="font-weight: bold;margin-left:5%">@ViewBag.Project.ProjectTitle</label>
+                @Html.HiddenFor(m => m.ProjectId, new { Model.ProjectId })
+                @Html.ValidationMessageFor(m => m.ProjectId, null, new { @class = "text-danger" })
+                
+                <br />
+
+                <br />
+                <div class="text-center">
+                    <button class="btn btn-success" type="submit">Add task</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

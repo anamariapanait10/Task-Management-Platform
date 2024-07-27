@@ -1,0 +1,63 @@
+﻿@model TaskManagementApp.Models.ApplicationUser
+
+
+
+@using (Html.BeginForm(actionName: "Edit", controllerName: "Users",
+     method: FormMethod.Post, routeValues: new { id = @Model.Id }))
+{
+
+    <i class="bi bi-person"></i>
+    @Html.Label("UserName", "UserName", new { @class = "" })
+
+    <br />
+
+    @Html.EditorFor(m => m.UserName)
+
+    <br />
+
+    <i class="bi bi-envelope"></i>
+    @Html.Label("Email", "User's email", new { @class = "" })
+
+    <br />
+
+    @Html.EditorFor(m => m.Email)
+
+    <br />
+
+    <i class="bi bi-phone"></i>
+    @Html.Label("PhoneNumber", "User's phone number")
+
+    <br />
+
+    @Html.EditorFor(m => m.PhoneNumber)
+
+    <br />
+
+    <i class="bi bi-person"></i>
+    @Html.Label("FirstName", "User's first name", new { @class = "" })
+
+    <br />
+
+    @Html.EditorFor(m => m.FirstName)
+
+    <br />
+
+    <i class="bi bi-person"></i>
+    @Html.Label("LastName", "User's last name", new { @class = "" })
+
+    <br />
+
+    @Html.EditorFor(m => m.LastName)
+
+    <br />
+
+    <i class="bi bi-card-list"></i>
+    <label>Select role</label>
+    @Html.DropDownList("newRole", new SelectList(Model.AllRoles, "Value", "Text", ViewBag.UserRole), null, new { @class = "form-control" })
+
+    <br />
+
+    <button class="btn btn-sm btn-success" type="submit">Edit user</button>
+
+
+}

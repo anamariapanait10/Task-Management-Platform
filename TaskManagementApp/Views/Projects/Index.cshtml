@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2 align="center">Displaying projects</h2>
+<br />
+@if (ViewBag.Message != null)
+{
+    <h2 class="alert-success p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+}
+
+
+<br />
+
+@* Search engine *@
+<form method="GET">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search projects by name or content" name="search"
+               value="@ViewBag.SearchString">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </div>
+</form>
+
+
+@foreach (TaskManagementApp.Models.Project project in ViewBag.Projects)
+{
+    <div class="card">
+
+        @Html.Partial("ProjectInfo", project)
+
+        <a class="btn btn-success" href="/Projects/Show/@project.ProjectId">Show project</a>
+
+    </div>
+
+    <br />
+}
+
+@* Paging the projects *@
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if (ViewBag.lastPage > 0)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@ViewBag.PaginationBaseUrl=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.lastPage; i++)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@ViewBag.PaginationBaseUrl=@i">
+                            @(
+                                i
+                                )
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item">
+                    <a class="page-link" href="@ViewBag.PaginationBaseUrl=@(ViewBag.lastPage)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <br />
+                <div>No project found!</div>
+            }
+        </ul>
+    </nav>
+</div>

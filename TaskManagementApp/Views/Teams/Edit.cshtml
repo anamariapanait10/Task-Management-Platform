@@ -1,0 +1,35 @@
+﻿@model TaskManagementApp.Models.Team
+
+
+<h2 class="text-center mt-5">Edit team</h2>
+<br />
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+
+            @using (Html.BeginForm(controllerName: "Teams", actionName: "Edit", method: FormMethod.Post,
+            routeValues: new { id = Model.TeamId }))
+            {
+                @Html.Label("TeamName", "Team Name")
+                <br />
+
+                @Html.EditorFor(m => m.TeamName, new { htmlAttributes = new { @class = "form-control" } })
+
+                @Html.ValidationMessageFor(m => m.TeamName, null, new { @class = "text-danger" })
+                <br />
+
+                @Html.HiddenFor(m => m.TeamDate, new { Model.TeamDate })
+                <br />
+
+                @Html.HiddenFor(m => m.ProjectId, new { Model.ProjectId })
+                <br />
+
+                <div class="text-center">
+                    <button class="btn btn-sm btn-success" type="submit">Edit team</button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+

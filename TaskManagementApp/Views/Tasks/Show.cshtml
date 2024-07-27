@@ -1,0 +1,246 @@
+﻿@model TaskManagementApp.Models.Task
+
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @TempData["messageType"]">
+        @TempData["message"]
+    </div>
+}
+
+<br />
+
+<div class="card">
+    <div class="card p-3">
+        @Html.Partial("TaskInfo", Model)
+        @if (@Model.Stat.StatName == "Not Assigned")
+        {
+            @if (ViewBag.ShowButtons && (ViewBag.IsAdmin || ViewBag.IsOrganizer))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Edit/@Model.TaskId" style="float:right"><i class="bi bi-body-text"></i>Edit description</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/AssignTask/@Model.TaskId" style="float:right"><i class="bi bi-person-lines-fill"></i>Assign task</a>
+                    </div>
+
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Delete task</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else if (@Model.Stat.StatName == "Not Started")
+        {
+            @if (ViewBag.ShowButtons && (ViewBag.IsAdmin || ViewBag.IsOrganizer))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Edit/@Model.TaskId" style="float:right"><i class="bi bi-body-text"></i>Edit description</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/AssignTask/@Model.TaskId" style="float:right"><i class="bi bi-person-lines-fill"></i>Reassign task</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeDate/@Model.TaskId" style="float:right"><i class="bi bi-calendar-event"></i>Edit date</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Edit state</a>
+                    </div>
+
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Delete task</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else if (ViewBag.ShowButtons && ViewBag.AssignedUser)
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Edit state</a>
+                    </div>
+                </div>
+            }
+        }
+        else if (@Model.Stat.StatName == "In Progress")
+        {
+            @if (ViewBag.ShowButtons && (ViewBag.IsAdmin || ViewBag.IsOrganizer))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success mx-2" href="/Tasks/Edit/@Model.TaskId" style="float:right"><i class="bi bi-body-text"></i>Edit description</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/AssignTask/@Model.TaskId" style="float:right"><i class="bi bi-person-lines-fill"></i>Reassign task</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeDate/@Model.TaskId" style="float:right"><i class="bi bi-calendar-event"></i>Edit date</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Edit state</a>
+                    </div>
+
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Delete task</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else if (ViewBag.ShowButtons && ViewBag.AssignedUser)
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-outline-success  mx-2" href="/Tasks/ChangeState/@Model.TaskId" style="float:right"><i class="bi bi-clipboard-data"></i>Edit state</a>
+                    </div>
+                </div>
+            }
+        }
+        else if (@Model.Stat.StatName == "Completed")
+        {
+            @if (ViewBag.ShowButtons && (ViewBag.IsAdmin || ViewBag.IsOrganizer))
+            {
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <form method="post" action="/Tasks/Delete/@Model.TaskId">
+                            <button class="btn btn-outline-danger mx-2" type="submit"><i class="bi bi-trash"></i> Delete task</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+</div>
+
+
+<br />
+<br />
+
+<h2 class="text-center">Comentarii</h2>
+@foreach (TaskManagementApp.Models.Comment comm in ViewBag.TasksComments)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1"></div>
+
+            <div class="col-md-10">
+
+                <div>
+                    @Html.Partial("CommentInfo", comm)
+                </div>
+                <br>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+}
+
+@* Paging the comments *@
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if (ViewBag.lastPage > 0)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@ViewBag.PaginationBaseUrl=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.lastPage; i++)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@ViewBag.PaginationBaseUrl=@i">
+                            @(
+                                i
+                                )
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item">
+                    <a class="page-link" href="@ViewBag.PaginationBaseUrl=@(ViewBag.lastPage)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <div>No comment found!</div>
+            }
+        </ul>
+    </nav>
+</div>
+
+
+@* Form to add comment *@
+<br />
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-2"></div>
+
+        <div class="col-md-8">
+
+            <div class="card">
+
+                <form method="post" action="/Tasks/Show/@Model.TaskId">
+
+                    <div class="card-body">
+
+                        <input type="hidden" name="TaskId" value="@Model.TaskId" />
+
+                        <label style="font-weight: bold; font-size:17px" name="CommentContent"> Add new comment</label>
+                        <br />
+
+                        <textarea class="form-control summernote" name="CommentContent"></textarea>
+
+                        @Html.ValidationMessage("CommentContent", null, new { @class = "text-danger"})
+
+                        <br /><br />
+
+                        <div class="text-center">
+                            <button class="btn btn-success text-right" type="submit">Add comment</button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-2"></div>
+
+    </div>
+
+</div>
+
+<br/>
+<br/>
+
+<div>
+    <a class="btn btn-outline-success  mx-2" href="@ViewBag.returnUrl"><i i class="bi bi-arrow-return-left"></i> Back</a>
+</div>
+
+@*
+<br />
+<div class="text-center">
+    <a class="btn btn-success" href="/Comments/New">Adauga un comentariu</a>
+</div>
+*@
